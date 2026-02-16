@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile — Poker Trainer</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="card">
+
+        <h1>Poker Trainer</h1>
+        <h2 id="usernameLabel">Username: admin</h2>
+
+        <div class="profile-box">
+            <div id="rankLabel">Rank: Bronze</div>
+
+            <div class="xp-container">
+                <div id="xpFill"></div>
+            </div>
+
+            <div id="xpText">XP: 0 / 100</div>
+        </div>
+
+        <div class="stats-box">
+            <div>Hands Played: 0</div>
+            <div>Hands Won: 0</div>
+            <div>Win Rate: 0%</div>
+            <div>Chips Won: $0</div>
+        </div>
+
+        <button onclick="addXP(15)">Add XP (Test)</button>
+        <button onclick="goMenu()">Back</button>
+
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

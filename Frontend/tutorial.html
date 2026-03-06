@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Tutorial — Poker Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+
+<style>
+:root{--gold:#c9a84c;--gold2:#f0d080;--bg:#050302;--panel:rgba(8,5,2,0.9);--border:rgba(201,168,76,0.13);--text:#ede8e0;--muted:rgba(255,255,255,0.32);--sub:rgba(180,170,150,0.8);}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100vh;background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--text);}
+body{
+  background:
+    radial-gradient(ellipse 110% 60% at 50% 0%,#1a0e04 0%,transparent 52%),
+    radial-gradient(ellipse 60% 55% at 0% 100%,#0a1408 0%,transparent 48%),#060302;
+  padding:40px 20px 70px;
+}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(201,168,76,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.018) 1px,transparent 1px);
+  background-size:56px 56px;}
+
+.wrap{position:relative;z-index:1;max-width:840px;margin:0 auto;display:flex;flex-direction:column;gap:16px;}
+
+/* Page header */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.ph-title{font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px;}
+.ph-title::before{content:'';display:block;width:22px;height:1px;background:var(--gold);opacity:0.5;}
+.ph-back{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);cursor:pointer;background:none;border:none;transition:color .15s;}
+.ph-back:hover{color:var(--gold2);}
+
+/* Cards */
+.card{background:var(--panel);border:1px solid rgba(255,255,255,0.05);border-radius:2px;padding:24px 26px;box-shadow:0 10px 28px rgba(0,0,0,0.7);backdrop-filter:blur(14px);}
+.card+.card{/* already spaced by gap */}
+
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.card-icon{font-size:18px;opacity:0.85;}
+.card-title{font-family:'Cinzel',serif;font-size:15px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold2);}
+
+.prose{font-size:13px;line-height:1.85;color:var(--sub);font-weight:500;}
+.prose strong{color:var(--text);font-weight:700;}
+.prose+.prose{margin-top:10px;}
+
+/* Streets */
+.streets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;}
+.street{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);border-radius:2px;padding:12px 10px;text-align:center;transition:border-color .15s;}
+.street:hover{border-color:rgba(201,168,76,0.28);}
+.street-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold2);margin-bottom:5px;}
+.street-desc{font-size:10px;line-height:1.6;color:var(--muted);}
+
+/* Hand grid */
+.hand-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:7px;margin-top:14px;}
+.hand-card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);border-radius:2px;padding:10px 12px;display:flex;align-items:center;gap:10px;transition:border-color .15s;}
+.hand-card:hover{border-color:rgba(201,168,76,0.28);}
+.hand-rank{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);min-width:26px;text-align:center;}
+.hand-name{font-size:12px;font-weight:700;color:var(--text);}
+.hand-ex{font-size:10px;color:var(--muted);margin-top:1px;}
+.hand-ex .r{color:#e05858;}
+
+/* Actions */
+.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px;}
+.ap{padding:9px 13px;border-radius:2px;border:1px solid;min-width:95px;transition:all .15s;}
+.ap:hover{opacity:0.85;}
+.ap-name{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px;}
+.ap-desc{font-size:10px;line-height:1.5;}
+.ap.check{border-color:rgba(60,150,255,0.25);background:rgba(60,150,255,0.05);}
+.ap.check .ap-name{color:#70b8ff;}.ap.check .ap-desc{color:rgba(112,184,255,0.5);}
+.ap.fold{border-color:rgba(255,60,60,0.25);background:rgba(255,60,60,0.05);}
+.ap.fold .ap-name{color:#ff7878;}.ap.fold .ap-desc{color:rgba(255,120,120,0.5);}
+.ap.call{border-color:rgba(60,210,60,0.25);background:rgba(60,210,60,0.05);}
+.ap.call .ap-name{color:#68d868;}.ap.call .ap-desc{color:rgba(104,216,104,0.5);}
+.ap.bet{border-color:rgba(201,168,76,0.25);background:rgba(201,168,76,0.05);}
+.ap.bet .ap-name{color:var(--gold2);}.ap.bet .ap-desc{color:rgba(240,208,128,0.5);}
+.ap.raise{border-color:rgba(240,208,128,0.3);background:rgba(240,208,128,0.06);}
+.ap.raise .ap-name{color:var(--gold2);}.ap.raise .ap-desc{color:rgba(240,208,128,0.5);}
+.ap.allin{border-color:rgba(220,50,50,0.38);background:rgba(220,50,50,0.07);}
+.ap.allin .ap-name{color:#ff5050;}.ap.allin .ap-desc{color:rgba(255,80,80,0.5);}
+
+/* Concept grid */
+.concept-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
+.concept{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);border-radius:2px;padding:14px;transition:border-color .15s;}
+.concept:hover{border-color:rgba(201,168,76,0.25);}
+.concept-icon{font-size:22px;margin-bottom:8px;}
+.concept-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:.5px;}
+.concept-desc{font-size:10px;color:var(--muted);line-height:1.65;}
+
+/* Playstyles */
+.styles-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;}
+.style{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);border-radius:2px;padding:12px 10px;text-align:center;transition:border-color .15s;}
+.style:hover{border-color:rgba(201,168,76,0.25);}
+.style-icon{font-size:22px;margin-bottom:7px;}
+.style-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;color:var(--gold2);margin-bottom:4px;}
+.style-desc{font-size:10px;color:var(--muted);line-height:1.6;}
+
+/* BB box */
+.bb-box{background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.18);border-radius:2px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;margin-top:14px;}
+.bb-icon{font-size:26px;flex-shrink:0;}
+.bb-text{font-size:12px;color:var(--sub);line-height:1.75;}
+.bb-text strong{color:var(--gold);}
+
+/* Back btn */
+.back-btn{width:100%;padding:12px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06);border-radius:2px;color:rgba(255,255,255,0.38);font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .18s;}
+.back-btn:hover{background:rgba(201,168,76,0.07);border-color:rgba(201,168,76,0.25);color:var(--gold2);}
+
+/* ─── Sound Controls ─────────────────────────── */
+.snd-bar{display:flex;align-items:center;gap:5px;}
+.snd-btn{
+  font-size:10px;font-family:'Rajdhani',sans-serif;font-weight:700;
+  letter-spacing:1.5px;padding:3px 8px;height:24px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:2px;cursor:pointer;color:rgba(230,220,200,0.7);
+  transition:all .15s;white-space:nowrap;
+}
+.snd-btn:hover{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.35);color:#c9a84c;}
+.snd-btn.muted{opacity:0.28;text-decoration:line-through;}
+
+</style>
+</head>
+<body>
+<script>document.addEventListener("DOMContentLoaded", requireAuth);</script>
+<div class="wrap">
+
+  <div class="ph">
+    <div class="ph-title">Tutorial</div>
+    <button class="ph-back" onclick="window.location.href='menu.html'">← Back to Lobby</button>
+  </div>
+
+  <!-- What is this app -->
+  <div class="card">
+    <div class="card-head"><span class="card-icon">🎯</span><span class="card-title">What is Poker Trainer?</span></div>
+    <p class="prose"><strong>Poker Trainer</strong> is a decision-making tool designed to sharpen your Texas Hold'em skills. Instead of playing full hands, you are dropped into a <strong>specific scenario</strong> mid-hand and asked to make the best possible decision.</p>
+    <p class="prose" style="margin-top:10px;">Each scenario has a <strong>correct answer</strong> based on poker theory and equity calculations. After submitting, you'll see whether your decision was optimal. Over time, your <strong>correct decision percentage</strong> will reflect genuine skill improvement.</p>
+    <div class="concept-grid">
+      <div class="concept"><div class="concept-icon">📋</div><div class="concept-title">Scenario Based</div><div class="concept-desc">You are placed mid-hand and must decide the best action given the board and opponents.</div></div>
+      <div class="concept"><div class="concept-icon">📈</div><div class="concept-title">Track Progress</div><div class="concept-desc">Your win rate and XP are tracked so you can watch yourself improve session by session.</div></div>
+      <div class="concept"><div class="concept-icon">🏆</div><div class="concept-title">Compete</div><div class="concept-desc">Your stats appear on the leaderboard so you can compare decision-making against other players.</div></div>
+    </div>
+  </div>
+
+  <!-- Hold'em basics -->
+  <div class="card">
+    <div class="card-head"><span class="card-icon">🃏</span><span class="card-title">Texas Hold'em Basics</span></div>
+    <p class="prose">Each player is dealt <strong>2 private hole cards</strong>. Over the course of the hand, <strong>5 community cards</strong> are revealed. The goal is the best possible <strong>5-card hand</strong> using any combination of hole cards and community cards.</p>
+    <div class="streets">
+      <div class="street"><div class="street-name">Pre-Flop</div><div class="street-desc">2 hole cards dealt. Blinds posted. First betting round.</div></div>
+      <div class="street"><div class="street-name">Flop</div><div class="street-desc">3 community cards revealed. Second betting round.</div></div>
+      <div class="street"><div class="street-name">Turn</div><div class="street-desc">4th community card. Third betting round.</div></div>
+      <div class="street"><div class="street-name">River</div><div class="street-desc">5th card revealed. Final betting round before showdown.</div></div>
+    </div>
+  </div>
+
+  <!-- Hand rankings -->
+  <div class="card">
+    <div class="card-head"><span class="card-icon">👑</span><span class="card-title">Hand Rankings</span></div>
+    <p class="prose">Hands ranked strongest to weakest. The higher the rank, the rarer and more powerful.</p>
+    <div class="hand-grid">
+      <div class="hand-card"><div class="hand-rank">1</div><div><div class="hand-name">Royal Flush</div><div class="hand-ex"><span class="r">A♥ K♥ Q♥ J♥ 10♥</span></div></div></div>
+      <div class="hand-card"><div class="hand-rank">2</div><div><div class="hand-name">Straight Flush</div><div class="hand-ex"><span class="r">9♥ 8♥ 7♥ 6♥ 5♥</span></div></div></div>
+      <div class="hand-card"><div class="hand-rank">3</div><div><div class="hand-name">Four of a Kind</div><div class="hand-ex">K♠ K♣ K♥ K♦ 3♠</div></div></div>
+      <div class="hand-card"><div class="hand-rank">4</div><div><div class="hand-name">Full House</div><div class="hand-ex">J♠ J♣ J♥ <span class="r">4♥ 4♦</span></div></div></div>
+      <div class="hand-card"><div class="hand-rank">5</div><div><div class="hand-name">Flush</div><div class="hand-ex"><span class="r">A♥ J♥ 8♥ 5♥ 2♥</span></div></div></div>
+      <div class="hand-card"><div class="hand-rank">6</div><div><div class="hand-name">Straight</div><div class="hand-ex">7♠ <span class="r">6♥</span> 5♣ <span class="r">4♦</span> 3♠</div></div></div>
+      <div class="hand-card"><div class="hand-rank">7</div><div><div class="hand-name">Three of a Kind</div><div class="hand-ex">Q♠ Q♣ <span class="r">Q♥</span> 7♠ 2♣</div></div></div>
+      <div class="hand-card"><div class="hand-rank">8</div><div><div class="hand-name">Two Pair</div><div class="hand-ex">A♠ A♣ <span class="r">K♥ K♦</span> 5♠</div></div></div>
+      <div class="hand-card"><div class="hand-rank">9</div><div><div class="hand-name">One Pair</div><div class="hand-ex">T♠ T♣ 8♠ <span class="r">4♥</span> 2♣</div></div></div>
+      <div class="hand-card"><div class="hand-rank">10</div><div><div class="hand-name">High Card</div><div class="hand-ex">A♠ J♣ 8♠ <span class="r">5♥</span> 2♣</div></div></div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="card">
+    <div class="card-head"><span class="card-icon">⚡</span><span class="card-title">Actions</span></div>
+    <p class="prose">On your turn you have several options depending on the current state of the hand.</p>
+    <div class="actions">
+      <div class="ap check"><div class="ap-name">Check</div><div class="ap-desc">Pass with no bet when no bet has been made.</div></div>
+      <div class="ap fold"><div class="ap-name">Fold</div><div class="ap-desc">Discard your hand and forfeit chips already in the pot.</div></div>
+      <div class="ap call"><div class="ap-name">Call</div><div class="ap-desc">Match the current bet to stay in the hand.</div></div>
+      <div class="ap bet"><div class="ap-name">Bet</div><div class="ap-desc">Place a wager when no bet has been made. Sizes shown as % of pot.</div></div>
+      <div class="ap raise"><div class="ap-name">Raise</div><div class="ap-desc">Increase an existing bet, forcing others to respond.</div></div>
+      <div class="ap allin"><div class="ap-name">All In</div><div class="ap-desc">Bet your entire remaining stack. Maximum aggression.</div></div>
+    </div>
+  </div>
+
+  <!-- BB -->
+  <div class="card">
+    <div class="card-head"><span class="card-icon">💰</span><span class="card-title">Big Blinds (BB)</span></div>
+    <p class="prose">This app measures stacks and pots in <strong>Big Blinds (BB)</strong> — the professional standard. It removes stake size from the equation, so a decision correct at $1/$2 is equally correct at $25/$50 when measured in BB.</p>
+    <div class="bb-box">
+      <div class="bb-icon">📐</div>
+      <div class="bb-text"><strong>Example:</strong> If the big blind is $2 and you have $200, you have <strong>100 BB</strong>. All players start with <strong>100 BB</strong>, representing a standard deep-stack cash game scenario.</div>
+    </div>
+  </div>
+
+  <!-- Playstyles -->
+  <div class="card">
+    <div class="card-head"><span class="card-icon">🧠</span><span class="card-title">Opponent Playstyles</span></div>
+    <p class="prose">Each opponent has an assigned <strong>playstyle</strong> reflecting their tendencies. Understanding opponents is core to correct decisions.</p>
+    <div class="styles-grid">
+      <div class="style"><div class="style-icon">🪨</div><div class="style-name">NIT</div><div class="style-desc">Extremely tight. Only premium hands. If they're in the pot, be careful.</div></div>
+      <div class="style"><div class="style-icon">🎯</div><div class="style-name">TAG</div><div class="style-desc">Tight-Aggressive. Selective but plays aggressively. Most common winning style.</div></div>
+      <div class="style"><div class="style-icon">🔥</div><div class="style-name">LAG</div><div class="style-desc">Loose-Aggressive. Plays many hands aggressively. Unpredictable and hard to read.</div></div>
+      <div class="style"><div class="style-icon">😴</div><div class="style-name">Passive</div><div class="style-desc">Loose-Passive. Plays many hands but rarely bets. A classic "calling station".</div></div>
+    </div>
+  </div>
+
+  <button class="back-btn" onclick="window.location.href='menu.html'">← Back to Lobby</button>
+</div>
+<script src="js/app.js"></script>
+<script src="js/sounds.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("button, .back-btn, .back-link").forEach(b => {
+    b.addEventListener("click", () => { if(window.SoundEngine) SoundEngine.play("navigate"); });
+  });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.SoundEngine){ SoundEngine.startMusic(); _syncSoundBtns(); }
+  document.querySelectorAll('button, .back-btn, a').forEach(el =>
+    el.addEventListener('click', () => { if(window.SoundEngine) SoundEngine.play('navigate'); })
+  );
+});
+
+/* ─── Sound Controls ───────────────────────────── */
+function sndToggleSfx(){
+  if(!window.SoundEngine) return;
+  const on = SoundEngine.toggleSfx();
+  const btn = document.getElementById('snd-sfx-btn');
+  if(btn) btn.classList.toggle('muted', !on);
+  if(on) SoundEngine.play('click');
+}
+function sndToggleMusic(){
+  if(!window.SoundEngine) return;
+  SoundEngine.toggleMusic();
+  const btn = document.getElementById('snd-music-btn');
+  if(btn) btn.classList.toggle('muted', !SoundEngine.musicEnabled());
+}
+function _syncSoundBtns(){
+  if(!window.SoundEngine) return;
+  const s = document.getElementById('snd-sfx-btn');
+  const m = document.getElementById('snd-music-btn');
+  if(s) s.classList.toggle('muted', !SoundEngine.sfxEnabled());
+  if(m) m.classList.toggle('muted', !SoundEngine.musicEnabled());
+}
+
+</script>
+</body>
+</html>

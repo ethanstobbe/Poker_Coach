@@ -17,17 +17,17 @@ async function apiFetch(path, options = {}) {
 function login() {
   const userEl = document.getElementById('user');
   const passEl = document.getElementById('pass');
-  const username = userEl?.value?.trim();
+  const email = userEl?.value?.trim();
   const password = passEl?.value;
 
-  if (!username || !password) {
-    alert('Enter username and password');
+  if (!email || !password) {
+    alert('Enter email/username and password');
     return;
   }
 
   apiFetch('/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ email, password }),
   })
     .then(() => {
       window.location.href = 'menu.html';

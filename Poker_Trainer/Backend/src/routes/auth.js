@@ -1,33 +1,61 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { supabase } = require('../config/supabase');
 
-// POST /api/auth/login — validate credentials (Supabase Auth or your users table)
-router.post('/login', async (req, res) => {
+const supabaseClient = require("../config/supabaseClient");
+const supabaseAdmin = require("../config/supabaseAdmin");
+/*
+POST /api/auth/login
+*/
+
+router.post("/login", async (req, res) => {
+
   try {
-    const { username, password } = req.body || {};
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password required' });
-    }
-    // TODO: Use Supabase Auth signInWithPassword or your custom users table
-    if (supabase) {
-      const { data, error } = await supabase.auth.signInWithPassword({ email: username, password });
-      if (error) return res.status(401).json({ error: error.message });
-      return res.json(data);
-    }
-    // Fallback for local dev without Supabase
-    if (username === 'admin' && password === '1234') {
-      return res.json({ user: { username }, token: 'dev-token' });
-    }
-    res.status(401).json({ error: 'Invalid credentials' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
-// POST /api/auth/logout
-router.post('/logout', (_req, res) => {
-  res.json({ ok: true });
+    const { email, password } = req.body || {};
+
+    if (!email || !password) {
+      return res.status(400).json({
+        error: "Email and password required"
+      });
+    }
+
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    if (error) {
+
+      console.error("LOGIN ERROR:", error);
+
+      return res.status(401).json({
+        error: "Invalid email or password"
+      });
+
+    }
+
+    res.json({
+
+      access_token: data.session.access_token,
+
+      user: {
+        id: data.user.id,
+        email: data.user.email
+      }
+
+    });
+
+  } catch (err) {
+
+    console.error("AUTH ERROR:", err);
+
+    res.status(500).json({
+      error: "Authentication failed"
+    });
+
+  }
+
 });
 
 module.exports = router;

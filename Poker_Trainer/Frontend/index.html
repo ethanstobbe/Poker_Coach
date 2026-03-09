@@ -1,20 +1,332 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Poker Trainer</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Poker Trainer — Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#050302;--gold:#c9a84c;--gold2:#f0d080;--gold3:#fff2b8;
+  --panel:rgba(8,5,2,0.92);--border:rgba(201,168,76,0.2);
+  --text:#ede8e0;--muted:rgba(255,255,255,0.32);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--text);}
+
+/* ── Multi-layer background ── */
+.bg{position:fixed;inset:0;z-index:0;}
+.bg-base{
+  position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 50%, #1c0e04 0%, #0a0502 38%, #030200 70%, #020101 100%);
+}
+.bg-glow{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 50% 40% at 50% 45%, rgba(201,168,76,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(20,80,30,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(30,20,60,0.06) 0%, transparent 55%);
+}
+.bg-grid{
+  position:fixed;inset:0;z-index:2;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(201,168,76,0.025) 1px,transparent 1px);
+  background-size:56px 56px;
+}
+.bg-vig{
+  position:fixed;inset:0;z-index:3;pointer-events:none;
+  background:radial-gradient(ellipse 100% 100% at 50% 50%,transparent 38%,rgba(0,0,0,0.72) 100%);
+}
+
+/* ── Drifting card symbols ── */
+.sym{
+  position:fixed;z-index:2;pointer-events:none;
+  font-family:'Cinzel',serif;font-weight:900;
+  color:rgba(201,168,76,0.032);user-select:none;
+  animation:drift linear infinite;
+}
+@keyframes drift{
+  0%  {transform:translateY(108vh) rotate(0deg);  opacity:0;}
+  4%  {opacity:1;}
+  96% {opacity:1;}
+  100%{transform:translateY(-14vh) rotate(16deg); opacity:0;}
+}
+
+/* ── Corner ornaments ── */
+.orn{position:fixed;z-index:4;pointer-events:none;opacity:0.28;}
+.orn-tl{top:14px;left:14px;}
+.orn-tr{top:14px;right:14px;transform:scaleX(-1);}
+.orn-bl{bottom:14px;left:14px;transform:scaleY(-1);}
+.orn-br{bottom:14px;right:14px;transform:scale(-1,-1);}
+
+/* ── Layout ── */
+.page{position:relative;z-index:10;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;}
+
+/* ── Card fan decoration ── */
+.card-fan{
+  position:absolute;right:-20px;bottom:-30px;
+  width:160px;height:160px;pointer-events:none;
+}
+.fan-card{
+  position:absolute;width:56px;height:80px;border-radius:5px;
+  background:linear-gradient(140deg,#1e4080,#0a2040);
+  border:1px solid rgba(80,140,220,0.22);
+  box-shadow:0 6px 18px rgba(0,0,0,0.8);
+  overflow:hidden;
+}
+.fan-card::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,0.045),rgba(255,255,255,0.045) 1.5px,transparent 1.5px,transparent 5px);}
+.fan-card::after{content:'';position:absolute;inset:5px;border-radius:3px;border:1px solid rgba(255,255,255,0.06);}
+.fan-card:nth-child(1){left:60px;bottom:40px;transform:rotate(-22deg);transform-origin:bottom center;}
+.fan-card:nth-child(2){left:52px;bottom:38px;transform:rotate(-8deg);transform-origin:bottom center;}
+.fan-card:nth-child(3){left:48px;bottom:36px;transform:rotate(6deg);transform-origin:bottom center;}
+.fan-card:nth-child(4){left:44px;bottom:34px;transform:rotate(20deg);transform-origin:bottom center;}
+
+/* ── Panel ── */
+.panel{
+  position:relative;
+  width:400px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:2px;
+  padding:44px 38px 38px;
+  backdrop-filter:blur(28px);
+  box-shadow:
+    0 60px 120px rgba(0,0,0,0.97),
+    0 0 0 1px rgba(255,255,255,0.025),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  animation:panelIn .6s cubic-bezier(.34,1.56,.64,1) both;
+  overflow:visible;
+}
+@keyframes panelIn{
+  from{transform:translateY(22px) scale(.96);opacity:0;}
+  to{transform:none;opacity:1;}
+}
+
+/* Top accent line */
+.panel::before{
+  content:'';position:absolute;top:-1px;left:15%;right:15%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  border-radius:2px;opacity:0.7;
+}
+
+/* ── Logo ── */
+.logo{text-align:center;margin-bottom:36px;}
+.logo-suits{
+  font-size:15px;letter-spacing:14px;
+  color:rgba(201,168,76,0.42);
+  margin-bottom:12px;
+}
+.logo-wordmark{
+  font-family:'Cinzel',serif;font-size:28px;font-weight:700;
+  letter-spacing:7px;text-transform:uppercase;
+  background:linear-gradient(180deg,var(--gold3) 0%,var(--gold2) 40%,var(--gold) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 18px rgba(201,168,76,0.4));
+  margin-bottom:6px;
+}
+.logo-tagline{font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);}
+
+/* Separator */
+.sep{display:flex;align-items:center;gap:10px;margin-bottom:26px;}
+.sep-line{flex:1;height:1px;background:rgba(201,168,76,0.1);}
+.sep-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);flex-shrink:0;box-shadow:0 0 5px rgba(201,168,76,0.7);}
+
+/* ── Form ── */
+.form{display:flex;flex-direction:column;gap:10px;}
+.field{position:relative;}
+.field-label{font-size:7px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;}
+.field input{
+  width:100%;padding:11px 14px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);border-radius:2px;
+  color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;
+  outline:none;transition:all .18s;
+}
+.field input::placeholder{color:rgba(255,255,255,0.2);font-weight:400;}
+.field input:focus{
+  background:rgba(255,255,255,0.06);
+  border-color:rgba(201,168,76,0.45);
+  box-shadow:0 0 0 3px rgba(201,168,76,0.08);
+}
+
+/* ── Submit button ── */
+.btn-submit{
+  margin-top:6px;width:100%;padding:13px;
+  background:linear-gradient(180deg,rgba(185,145,52,0.95),rgba(148,110,30,0.95));
+  border:1px solid rgba(201,168,76,0.5);
+  border-radius:2px;
+  color:#0a0600;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:4px;text-transform:uppercase;
+  cursor:pointer;transition:all .18s;position:relative;overflow:hidden;
+}
+.btn-submit::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,0.12),transparent);
+  pointer-events:none;
+}
+.btn-submit:hover{
+  background:linear-gradient(180deg,rgba(210,168,64,0.98),rgba(168,126,38,0.98));
+  box-shadow:0 0 24px rgba(201,168,76,0.45),0 4px 16px rgba(0,0,0,0.5);
+  transform:translateY(-1px);
+}
+.btn-submit:active{transform:translateY(0);box-shadow:0 0 12px rgba(201,168,76,0.3);}
+
+/* ── Error ── */
+.err{
+  margin-top:8px;font-size:11px;letter-spacing:.5px;
+  color:#ff8888;display:none;text-align:center;
+  padding:7px 10px;background:rgba(180,20,20,0.1);
+  border:1px solid rgba(180,20,20,0.25);border-radius:2px;
+}
+
+/* ─── Sound Controls ─────────────────────────── */
+.snd-bar{display:flex;align-items:center;gap:5px;}
+.snd-btn{
+  font-size:10px;font-family:'Rajdhani',sans-serif;font-weight:700;
+  letter-spacing:1.5px;padding:3px 8px;height:24px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:2px;cursor:pointer;color:rgba(230,220,200,0.7);
+  transition:all .15s;white-space:nowrap;
+}
+.snd-btn:hover{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.35);color:#c9a84c;}
+.snd-btn.muted{opacity:0.28;text-decoration:line-through;}
+
+</style>
 </head>
-
 <body>
-    <div class="card">
-        <h1>Poker Trainer</h1>
 
-        <input id="user" placeholder="Username">
-        <input id="pass" type="password" placeholder="Password">
+<div class="bg-base"></div>
+<div class="bg-glow"></div>
+<div class="bg-grid"></div>
+<div class="bg-vig"></div>
 
-        <button onclick="login()">Login</button>
+<!-- Floating symbols -->
+<div class="sym" style="font-size:100px;left:5%;  animation-duration:32s;animation-delay:0s;">A♠</div>
+<div class="sym" style="font-size:120px;left:22%; animation-duration:38s;animation-delay:11s;">K♥</div>
+<div class="sym" style="font-size:88px; left:55%; animation-duration:27s;animation-delay:5s;">Q♦</div>
+<div class="sym" style="font-size:105px;left:73%; animation-duration:34s;animation-delay:17s;">J♣</div>
+<div class="sym" style="font-size:90px; left:88%; animation-duration:24s;animation-delay:8s;">A♦</div>
+
+<!-- Corner ornaments -->
+<svg class="orn orn-tl" width="70" height="70" viewBox="0 0 70 70" fill="none">
+  <path d="M3 67V3H67" stroke="#c9a84c" stroke-width="1" fill="none"/>
+  <circle cx="3" cy="3" r="2" fill="#c9a84c"/>
+  <path d="M18 3L3 18" stroke="#c9a84c" stroke-width="0.4" opacity="0.4"/>
+  <path d="M35 3L3 35" stroke="#c9a84c" stroke-width="0.25" opacity="0.2"/>
+</svg>
+<svg class="orn orn-tr" width="70" height="70" viewBox="0 0 70 70" fill="none">
+  <path d="M3 67V3H67" stroke="#c9a84c" stroke-width="1" fill="none"/>
+  <circle cx="3" cy="3" r="2" fill="#c9a84c"/>
+</svg>
+<svg class="orn orn-bl" width="70" height="70" viewBox="0 0 70 70" fill="none">
+  <path d="M3 67V3H67" stroke="#c9a84c" stroke-width="1" fill="none"/>
+  <circle cx="3" cy="3" r="2" fill="#c9a84c"/>
+</svg>
+<svg class="orn orn-br" width="70" height="70" viewBox="0 0 70 70" fill="none">
+  <path d="M3 67V3H67" stroke="#c9a84c" stroke-width="1" fill="none"/>
+  <circle cx="3" cy="3" r="2" fill="#c9a84c"/>
+</svg>
+
+<div class="page">
+  <div class="panel">
+
+    <!-- Decorative card fan -->
+    <div class="card-fan">
+      <div class="fan-card"></div>
+      <div class="fan-card"></div>
+      <div class="fan-card"></div>
+      <div class="fan-card"></div>
     </div>
 
-    <script src="js/app.js"></script>
+    <div class="logo">
+      <div class="logo-suits">♠  ♥  ♦  ♣</div>
+      <div class="logo-wordmark">Poker Trainer</div>
+      <div class="logo-tagline">Sign in to continue</div>
+    </div>
+
+    <div class="sep">
+      <div class="sep-line"></div>
+      <div class="sep-diamond"></div>
+      <div class="sep-line"></div>
+    </div>
+
+    <div class="form">
+      <div class="field">
+        <label class="field-label">Email address</label>
+        <input id="email" type="email" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Password</label>
+        <input id="password" type="password" placeholder="••••••••" autocomplete="current-password"
+               onkeydown="if(event.key==='Enter')handleLogin()"/>
+      </div>
+      <button class="btn-submit" onclick="handleLogin()">Sign In</button>
+      <div id="loginError" class="err"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* Override app.js showError to use inline display instead of alert() */
+function showError(msg){
+  const el = document.getElementById("loginError");
+  if(el){ el.textContent = msg; el.style.display = "block"; }
+}
+function showErr(msg){ showError(msg); }
+
+function handleLogin(){
+  const email    = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  if(!email||!password){ showErr("Please enter your email and password."); return; }
+  // Clear any previous error
+  const errEl = document.getElementById("loginError");
+  if(errEl) errEl.style.display = "none";
+  // login() is from app.js
+  try{
+    const result = login(email, password);
+    if(result && result.catch) result.catch(err => showErr("Connection error. Is the server running?"));
+  } catch(e){
+    showErr("Connection error. Is the server running?");
+  }
+}
+</script>
+<script src="js/app.js"></script>
+<script src="js/sounds.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if(window.SoundEngine){ SoundEngine.startMusic(); _syncSoundBtns(); }
+  document.querySelectorAll('button').forEach(b =>
+    b.addEventListener('click', () => { if(window.SoundEngine) SoundEngine.play('click'); })
+  );
+});
+
+/* ─── Sound Controls ───────────────────────────── */
+function sndToggleSfx(){
+  if(!window.SoundEngine) return;
+  const on = SoundEngine.toggleSfx();
+  const btn = document.getElementById('snd-sfx-btn');
+  if(btn) btn.classList.toggle('muted', !on);
+  if(on) SoundEngine.play('click');
+}
+function sndToggleMusic(){
+  if(!window.SoundEngine) return;
+  SoundEngine.toggleMusic();
+  const btn = document.getElementById('snd-music-btn');
+  if(btn) btn.classList.toggle('muted', !SoundEngine.musicEnabled());
+}
+function _syncSoundBtns(){
+  if(!window.SoundEngine) return;
+  const s = document.getElementById('snd-sfx-btn');
+  const m = document.getElementById('snd-music-btn');
+  if(s) s.classList.toggle('muted', !SoundEngine.sfxEnabled());
+  if(m) m.classList.toggle('muted', !SoundEngine.musicEnabled());
+}
+
+</script>
 </body>
 </html>

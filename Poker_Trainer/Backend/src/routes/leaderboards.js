@@ -1,26 +1,39 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { supabase } = require('../config/supabase');
 
-// GET /api/leaderboards — top players (from Supabase when configured)
-router.get('/', async (_req, res) => {
+const supabaseAdmin = require("../config/supabaseAdmin");
+
+router.get("/", async (_req, res) => {
   try {
-    if (supabase) {
-      // const { data, error } = await supabase.from('leaderboard').select('*').order('chips', { ascending: false }).limit(10);
-      // if (error) return res.status(500).json({ error: error.message });
-      // return res.json(data);
-    }
-    // Fallback mock data
-    const mock = [
-      { name: 'AceMaster', rank: 'Diamond', chips: 25000, winrate: '68%' },
-      { name: 'CardShark', rank: 'Platinum', chips: 18200, winrate: '64%' },
-      { name: 'BluffKing', rank: 'Gold', chips: 15100, winrate: '61%' },
-      { name: 'RiverQueen', rank: 'Gold', chips: 12000, winrate: '59%' },
-      { name: 'PocketPair', rank: 'Silver', chips: 9800, winrate: '55%' },
-    ];
-    res.json(mock);
+    /* Fetch users ordered by XP */
+    const { data: users, error } = await supabaseAdmin
+      .from("users")
+      .select("user_id, username, xp, rank")
+      .order("xp", { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+
+    /* Fetch all ranks in one query and build a lookup map */
+    const { data: ranks } = await supabaseAdmin
+      .from("ranks")
+      .select("rank_id, name");
+
+    const rankMap = {};
+    (ranks || []).forEach(r => { rankMap[r.rank_id] = r.name; });
+
+    const leaderboard = (users || []).map((player, index) => ({
+      position: index + 1,
+      username: player.username,
+      rank:     player.rank ? (rankMap[player.rank] || "Copper") : "Copper",
+      xp:       player.xp ?? 0,
+    }));
+
+    res.json(leaderboard);
+
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Leaderboard error:", err);
+    res.status(500).json({ error: "Failed to load leaderboard" });
   }
 });
 

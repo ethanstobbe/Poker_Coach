@@ -1,9 +1,0 @@
-# Dependencies
-node_modules/
-
-# Environment (never commit secrets)
-# .env
-
-# Logs
-*.log
-npm-debug.log*

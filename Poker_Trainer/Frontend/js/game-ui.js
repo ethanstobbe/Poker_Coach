@@ -11,7 +11,7 @@
   function noop(){}
 
   /* ════════════════════════════════════
-     CARD HELPERS
+     CARD HELPERShhhhhhhhhh
   ════════════════════════════════════ */
 
   function clearCard(el){

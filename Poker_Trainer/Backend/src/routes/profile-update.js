@@ -90,35 +90,42 @@ router.post("/avatar", upload.single("avatar"), async (req, res) => {
     if (userErr || !user) {
       return res.status(404).json({ error: "User not found" });
     }
+ // change from user.username to authID because username can change 
+ 
+    const fileName = `${authId}.png`;
 
-    const fileName = `${user.username}.png`;
-
-    const { error: uploadErr } = await supabaseAdmin
-      .storage
+    // Upload image
+    const { error: uploadErr } = await supabaseAdmin.storage
       .from("avatars")
       .upload(fileName, req.file.buffer, {
         contentType: "image/png",
-        upsert: true,
+        upsert: true
       });
 
     if (uploadErr) {
       console.error("[profile/avatar] upload error:", uploadErr);
-      return res.status(500).json({ error: "Failed to upload avatar: " + uploadErr.message });
+      return res.status(500).json({
+        error: "Failed to upload avatar: " + uploadErr.message
+      });
     }
 
-    const { data: urlData } = supabaseAdmin
-      .storage
+    // Get public URL
+    const { data: urlData } = supabaseAdmin.storage
       .from("avatars")
       .getPublicUrl(fileName);
 
     const publicUrl = urlData?.publicUrl || null;
 
+    // Save URL to DB
     await supabaseAdmin
       .from("users")
       .update({ avatar_url: publicUrl })
       .eq("auth_id", authId);
 
-    res.json({ success: true, avatarUrl: publicUrl });
+    res.json({
+      success: true,
+      avatarUrl: publicUrl
+    });
 
   } catch (err) {
     console.error("[profile/avatar] exception:", err);

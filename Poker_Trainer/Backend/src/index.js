@@ -8,7 +8,11 @@ const authRoutes = require("./routes/auth");
 const usersRoutes = require("./routes/users");
 const leaderboardsRoutes = require("./routes/leaderboards-with-avatars");
 const gameRoutes = require("./routes/game");
+const passResetRoutes = require("./routes/pass-reset");
+const signupRoutes = require("./routes/signup");
+const newPassRoutes = require("./routes/new-pass");
 const profileRoutes = require("./routes/profile-update");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 /* ==============================
@@ -29,7 +33,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/leaderboards", leaderboardsRoutes);
 app.use("/api/game", gameRoutes);
+app.use("/api/pass-reset", passResetRoutes);
+app.use("/api/signup", signupRoutes);
+app.use("/api/new-pass", newPassRoutes);
 app.use("/api/profile", profileRoutes);
+
 app.get("/api/health", (_req, res) => {
   res.json({
     ok: true,

@@ -173,6 +173,26 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 }
 .btn-submit:active{transform:translateY(0);box-shadow:0 0 12px rgba(201,168,76,0.3);}
 
+.auth-links{
+  margin-top:10px;
+  text-align:center;
+  font-size:11px;
+  letter-spacing:.6px;
+  color:var(--muted);
+}
+
+.auth-links a{
+  color:var(--gold);
+  text-decoration:none;
+  margin:0 6px;
+  transition:all .15s;
+}
+
+.auth-links a:hover{
+  text-decoration:underline;
+  color:var(--gold3);
+}
+
 /* ── Error ── */
 .err{
   margin-top:8px;font-size:11px;letter-spacing:.5px;
@@ -264,6 +284,13 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
                onkeydown="if(event.key==='Enter')handleLogin()"/>
       </div>
       <button class="btn-submit" onclick="handleLogin()">Sign In</button>
+
+      <div class="auth-links">
+        <a href="forgot-password.html">Forgot password?</a>
+        •
+        <a href="signup.html">Sign up</a>
+      </div>
+
       <div id="loginError" class="err"></div>
     </div>
 

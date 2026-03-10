@@ -619,6 +619,34 @@ function goTutorial() { window.location.href = "tutorial.html"; }
 function goProfile() { window.location.href = "profile.html"; }
 
 /* =============================
+   SIGNUP
+============================= */
+async function signup(email, password) {
+
+  showLoading(true);
+
+  const res = await fetch(`${API_BASE}/signup`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ email, password })
+  });
+
+  console.log(`${API_BASE}/signup`);
+
+  const data = await res.json();
+
+  showLoading(false);
+
+  if (!res.ok) {
+    showError(data.error || "Signup failed");
+    return;
+  }
+
+  // Auto-login after successful signup
+  login(email, password);
+}
+
+/* =============================
    LOGIN
 ============================= */
 
@@ -656,6 +684,53 @@ async function login(email, password) {
 function logout() {
   localStorage.clear();
   window.location.href = "index.html";
+}
+
+/* =============================
+   RESET PASSWORD
+============================= */
+async function resetPassword(email) {
+
+  showLoading(true);
+
+  const res = await fetch(`${API_BASE}/pass-reset`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ email })
+  });
+
+  const data = await res.json();
+
+  showLoading(false);
+
+  if (!res.ok) {
+    showError(data.error || "Login failed");
+    return;
+  }
+}
+
+/* =============================
+   UPDATE PASSWORD
+============================= */
+async function updatePassword(password, email) {
+  
+  showLoading(true);
+
+  const res = await fetch(`${API_BASE}/new-pass`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password, email })
+  });
+
+  const data = await res.json();
+
+  showLoading(false);
+
+  if (!res.ok) {
+    return { error: data.error || "Failed to reset password" };
+  }
+
+  return data;
 }
 
 /* =============================

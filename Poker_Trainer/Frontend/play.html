@@ -174,7 +174,7 @@ body::after{
 }
 
 .board-card{
-  width:50px;height:72px;border-radius:6px;
+  width:64px;height:90px;border-radius:8px;
   background:rgba(255,255,255,0.035);
   border:1px dashed rgba(255,255,255,0.1);
   display:flex;justify-content:center;align-items:center;
@@ -186,7 +186,7 @@ body::after{
 .board-card.filled{
   background:linear-gradient(160deg,#fefefe 0%,#f2f2f2 100%);
   border:1px solid rgba(0,0,0,0.08);
-  font-size:22px;color:#111;font-weight:900;
+  font-size:26px;color:#111;font-weight:900;
   box-shadow:
     0 5px 18px rgba(0,0,0,0.8),
     0 2px 6px rgba(0,0,0,0.5),
@@ -198,14 +198,14 @@ body::after{
 .board-card.filled::before{
   content:attr(data-rank) " " attr(data-suit);
   position:absolute;top:3px;left:4px;
-  font-size:10px;font-weight:900;line-height:1.1;
+  font-size:12px;font-weight:900;line-height:1.1;
   color:inherit;white-space:nowrap;
 }
 /* Corner bottom-right */
 .board-card.filled::after{
   content:attr(data-rank) " " attr(data-suit);
   position:absolute;bottom:3px;right:4px;
-  font-size:10px;font-weight:900;line-height:1.1;
+  font-size:12px;font-weight:900;line-height:1.1;
   color:inherit;white-space:nowrap;transform:rotate(180deg);
 }
 .board-card.red{color:var(--red-card);}
@@ -445,6 +445,60 @@ body::after{
 .info-key{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.28);}
 .info-val{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--gold2);}
 .info-val.green{color:#55ee88;}.info-val.white{color:rgba(255,255,255,0.8);}
+
+/* ═══════════════════ PLAY STYLES PANEL ═══════════════════ */
+#styles-panel{
+  position:fixed;top:54px;left:14px;z-index:50;
+  background:var(--glass);border:1px solid rgba(201,168,76,0.18);
+  border-radius:4px;padding:0;width:230px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.85);backdrop-filter:blur(20px);
+  overflow:hidden;
+}
+#styles-panel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;border-bottom:1px solid rgba(201,168,76,0.12);
+  background:rgba(201,168,76,0.06);cursor:pointer;user-select:none;
+}
+#styles-panel-title{
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(201,168,76,0.88);font-family:'Cinzel',serif;font-weight:600;
+}
+#styles-panel-toggle{
+  font-size:13px;color:rgba(201,168,76,0.5);transition:transform .2s;
+}
+#styles-panel.collapsed #styles-panel-toggle{ transform:rotate(-90deg); }
+#styles-panel-body{
+  padding:10px 16px 16px;
+  transition:max-height .28s ease, opacity .22s ease;
+  max-height:600px;opacity:1;overflow:hidden;
+}
+#styles-panel.collapsed #styles-panel-body{
+  max-height:0;opacity:0;padding-top:0;padding-bottom:0;
+}
+.style-entry{
+  padding:11px 0;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.style-entry:last-child{ border-bottom:none; }
+.style-tag-row{
+  display:flex;align-items:center;gap:9px;margin-bottom:6px;
+}
+.style-tag-pill{
+  font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;
+  padding:3px 11px;border-radius:3px;flex-shrink:0;
+}
+.style-tag-pill.nit  { background:rgba(80,180,255,0.14);color:#80c8ff;border:1px solid rgba(80,180,255,0.35); }
+.style-tag-pill.tag  { background:rgba(50,200,80,0.14); color:#60e878;border:1px solid rgba(50,200,80,0.35); }
+.style-tag-pill.lag  { background:rgba(255,80,80,0.14); color:#ff8888;border:1px solid rgba(255,80,80,0.35); }
+.style-tag-pill.passive{ background:rgba(201,168,76,0.14);color:var(--gold2);border:1px solid rgba(201,168,76,0.35); }
+.style-full-name{
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,0.55);font-weight:700;font-family:'Rajdhani',sans-serif;
+}
+.style-desc{
+  font-size:12px;line-height:1.6;color:rgba(255,255,255,0.38);
+  font-style:italic;font-family:'Rajdhani',sans-serif;
+}
 
 /* ═══════════════════ RESULT PANEL ═══════════════════ */
 #result-panel{
@@ -905,6 +959,49 @@ body::after{
   </div><!-- /#table-wrap -->
 </div><!-- /#scene -->
 
+<!-- ═══════════════ PLAY STYLES LEGEND ═══════════════ -->
+<div id="styles-panel">
+  <div id="styles-panel-header" onclick="toggleStylesPanel()">
+    <div id="styles-panel-title">Player Styles</div>
+    <div id="styles-panel-toggle">▾</div>
+  </div>
+  <div id="styles-panel-body">
+
+    <div class="style-entry">
+      <div class="style-tag-row">
+        <span class="style-tag-pill nit">NIT</span>
+        <span class="style-full-name">Tight Passive</span>
+      </div>
+      <div class="style-desc">Plays very few hands, folds often, rarely bluffs, bets only strong hands.</div>
+    </div>
+
+    <div class="style-entry">
+      <div class="style-tag-row">
+        <span class="style-tag-pill tag">TAG</span>
+        <span class="style-full-name">Tight Aggressive</span>
+      </div>
+      <div class="style-desc">Plays strong hands and bets aggressively. Balanced, professional style.</div>
+    </div>
+
+    <div class="style-entry">
+      <div class="style-tag-row">
+        <span class="style-tag-pill lag">LAG</span>
+        <span class="style-full-name">Loose Aggressive</span>
+      </div>
+      <div class="style-desc">Plays many hands, bluffs frequently, applies constant pressure.</div>
+    </div>
+
+    <div class="style-entry">
+      <div class="style-tag-row">
+        <span class="style-tag-pill passive">PASSIVE</span>
+        <span class="style-full-name">Loose Passive</span>
+      </div>
+      <div class="style-desc">Calls frequently, rarely raises, avoids building large pots.</div>
+    </div>
+
+  </div>
+</div>
+
 <!-- ═══════════════ INFO PANEL (bottom-left overlay) ═══════════════ -->
 <div id="info-panel">
   <div class="info-row">
@@ -1351,6 +1448,12 @@ async function completeGame(){
 }
 
 document.addEventListener("DOMContentLoaded", () => { setPhase("idle"); });
+
+/* ─── STYLES PANEL TOGGLE ─────────────────────────── */
+function toggleStylesPanel(){
+  const panel = document.getElementById("styles-panel");
+  if(panel) panel.classList.toggle("collapsed");
+}
 </script>
 
 </body>

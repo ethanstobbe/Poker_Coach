@@ -379,6 +379,22 @@
     return seat === 0 ? document.getElementById("act-hero") : document.getElementById(`act-p${seat}`);
   }
 
+  /* Highlight the active player's seat while actions are playing */
+  function setActiveSeat(playerNumOrNull){
+    const wrap = document.getElementById("table-wrap");
+    if(!wrap) return;
+    // Clear all existing highlights
+    wrap.querySelectorAll(".seat.is-active").forEach(seatEl => {
+      seatEl.classList.remove("is-active");
+    });
+    if(!playerNumOrNull) return;
+    const displaySeat = getDisplaySeatId(playerNumOrNull);
+    const seatEl = displaySeat === 0
+      ? document.getElementById("hero")
+      : document.getElementById(`p${displaySeat}`);
+    if(seatEl) seatEl.classList.add("is-active");
+  }
+
   window.initPotAndStacks = function(scenarioPot, existingStacks, heroSeatForMapping) {
     potBB = parseFloat(scenarioPot) || 0;
     if (existingStacks && Object.keys(existingStacks).length > 0 && heroSeatForMapping != null) {
@@ -608,6 +624,7 @@
   function playActionsInOrder(actions, onHeroTurn, onComplete){
     if(actions==="HAND_OVER"){
       showHandOver();
+      setActiveSeat(null);
       later(onComplete||noop, 600);
       return;
     }
@@ -630,8 +647,14 @@
         // All scripted actions done — if hero never had a turn, give one now
         if(!heroSeen && onHeroTurn){
           heroSeen=true;
-          onHeroTurn(() => later(onComplete||noop, 400));
+          // Highlight the real hero seat from current scenario mapping
+          setActiveSeat(heroSeat);
+          onHeroTurn(() => {
+            setActiveSeat(null);
+            later(onComplete||noop, 400);
+          });
         } else {
+          setActiveSeat(null);
           later(onComplete||noop, 400);
         }
         return;
@@ -640,14 +663,24 @@
 
       if(act.isHero && !heroSeen){
         heroSeen=true;
-        if(onHeroTurn){ onHeroTurn(next); return; }
+        if(onHeroTurn){
+          // Highlight the real hero seat from current scenario mapping
+          setActiveSeat(heroSeat);
+          onHeroTurn(() => {
+            setActiveSeat(null);
+            next();
+          });
+          return;
+        }
         // No UI handler supplied — auto-play the correct action
+        setActiveSeat(parseInt(act.player.replace("P","")));
         showSeatAction(act);
         later(next, 1100);
         return;
       }
 
       // Opponent action (or subsequent hero action — show correct move)
+      setActiveSeat(parseInt(act.player.replace("P","")));
       showSeatAction(act);
       later(next, 1100);
     }
@@ -788,7 +821,7 @@
     const street = scenario.currentStreet || "flop";
     updateStreetLabel(street.toUpperCase());
 
-    // Hero cards face-up
+    // Hero cards face-up immediately
     const hc1 = document.getElementById("card1");
     const hc2 = document.getElementById("card2");
     if(scenario.hero?.[0]) renderCard(hc1, scenario.hero[0]);
@@ -796,37 +829,33 @@
     renderCard(document.getElementById("mini-card1"), scenario.hero?.[0]);
     renderCard(document.getElementById("mini-card2"), scenario.hero?.[1]);
 
-    // Board up to current street (no animation)
-    if(scenario.flop?.length >= 3){
-      renderCard(document.getElementById("flop1"), scenario.flop[0]);
-      renderCard(document.getElementById("flop2"), scenario.flop[1]);
-      renderCard(document.getElementById("flop3"), scenario.flop[2]);
+    // Play streets in order with card dealing between them
+    function playFlop(done){
+      window.dealStreet("flop", scenario, null, done || noop);
     }
-    if(street !== "flop" && scenario.turn?.length) {
-      renderCard(document.getElementById("turnCard"), scenario.turn[0]);
+    function playTurn(done){
+      window.dealStreet("turn", scenario, null, done || noop);
     }
-    if(street === "river" && scenario.river?.length) {
-      renderCard(document.getElementById("riverCard"), scenario.river[0]);
+    function playRiverWithHero(){
+      window.dealStreet("river", scenario, onHeroTurn || noop, noop);
     }
-
-    function playCurrentWithHero(){
-      const actions = street === "flop" ? scenario.flopActions
-        : street === "turn" ? scenario.turnActions
-        : scenario.riverActions;
-      playActionsInOrder(actions, onHeroTurn || noop, noop);
+    function playTurnWithHero(){
+      window.dealStreet("turn", scenario, onHeroTurn || noop, noop);
+    }
+    function playFlopWithHero(){
+      window.dealStreet("flop", scenario, onHeroTurn || noop, noop);
     }
 
-    if(street === "flop"){
-      playCurrentWithHero();
-      return;
-    }
-    if(street === "turn"){
-      playActionsInOrder(scenario.flopActions, null, () => playCurrentWithHero());
-      return;
-    }
-    if(street === "river"){
-      playActionsInOrder(scenario.flopActions, null, () => {
-        playActionsInOrder(scenario.turnActions, null, () => playCurrentWithHero());
+    if (street === "flop") {
+      // Start directly on flop: deal flop, then pause on hero action
+      playFlopWithHero();
+    } else if (street === "turn") {
+      // Replay flop (cards + actions), then deal turn and pause on hero
+      playFlop(() => playTurnWithHero());
+    } else if (street === "river") {
+      // Replay flop, then turn, then deal river and pause on hero
+      playFlop(() => {
+        playTurn(() => playRiverWithHero());
       });
     }
   };

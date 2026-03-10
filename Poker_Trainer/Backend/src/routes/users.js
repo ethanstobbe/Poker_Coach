@@ -109,7 +109,6 @@ router.get("/me", async (req, res) => {
 
     const token = authHeader.split(" ")[1];
 
-    /* ── Verify JWT ── */
     const { data: authData, error: authError } =
       await supabaseClient.auth.getUser(token);
 
@@ -119,10 +118,9 @@ router.get("/me", async (req, res) => {
 
     const authId = authData.user.id;
 
-    /* ── Fetch user row ── */
     const { data: user, error: userErr } = await supabaseAdmin
       .from("users")
-      .select("user_id, username, xp, rank, scenarios_played, scenarios_won, correct_play_percentage, life_time_earning")
+      .select("user_id, username, avatar_url, xp, rank, scenarios_played, scenarios_won, correct_play_percentage, life_time_earning")
       .eq("auth_id", authId)
       .maybeSingle();
 
@@ -130,11 +128,11 @@ router.get("/me", async (req, res) => {
       console.error("[users/me] query error:", userErr);
       return res.status(500).json({ error: "Database error", detail: userErr.message });
     }
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    /* ── Fetch rank name (FK column is "rank") ── */
     let rankName = "Copper";
     if (user.rank) {
       const { data: rankRow } = await supabaseAdmin
@@ -142,23 +140,24 @@ router.get("/me", async (req, res) => {
         .select("name")
         .eq("rank_id", user.rank)
         .maybeSingle();
+
       if (rankRow?.name) rankName = rankRow.name;
     }
 
-    /* ── Derive win-rate if not stored ── */
-    const played  = user.scenarios_played ?? 0;
-    const won     = user.scenarios_won    ?? 0;
+    const played = user.scenarios_played ?? 0;
+    const won = user.scenarios_won ?? 0;
     const winrate = user.correct_play_percentage
       ?? (played > 0 ? Math.round((won / played) * 100) : 0);
 
     res.json({
-      username:    user.username,
-      rank:        rankName,
-      xp:          user.xp               ?? 0,
+      username: user.username,
+      avatar_url: user.avatar_url ?? null,
+      rank: rankName,
+      xp: user.xp ?? 0,
       handsPlayed: played,
-      handsWon:    won,
+      handsWon: won,
       winrate,
-      earnings:    user.life_time_earning ?? 0,
+      earnings: user.life_time_earning ?? 0,
     });
 
   } catch (err) {

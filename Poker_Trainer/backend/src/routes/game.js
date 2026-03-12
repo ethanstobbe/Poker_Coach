@@ -420,12 +420,17 @@ router.post("/:sessionId/complete", async (req, res) => {
     await supabaseAdmin.from("sessions")
       .update({ status: "completed", completed_at: new Date() }).eq("id", sessionId);
 
-    await supabaseAdmin.rpc("increment_user_stats_and_rank", {
+    //Changed for error checking
+    const { error: rpcError } = await supabaseAdmin.rpc("increment_user_stats_and_rank", {
       p_user_id:   session.user_id,
       p_xp_gain:   xpGain,
       p_is_correct: isCorrect,
       p_earnings:  earningsGain
     });
+    if (rpcError) {
+      console.error("RPC increment_user_stats_and_rank failed:", rpcError);
+      throw rpcError;
+    }
 
     res.json({ difficulty: session.difficulty, isCorrect, xpGain, earningsGain });
   } catch (err) {

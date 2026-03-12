@@ -969,6 +969,9 @@ async function submitEquity() {
     result.innerText =
       `Correct: ${data.correctEquity} | Score: ${data.score}`;
   }
+
+  // Bug fix: Dillon
+  await completeGame();
 }
 
 /* =============================

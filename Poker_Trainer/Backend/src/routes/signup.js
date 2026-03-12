@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
-    const { data, error } = await supabaseAdmin.auth.admin.createUser({ email, password, email_confirm: true });
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({ email, password, email_confirm: false });
 
     if (error) {
       console.error("Supabase signup error:", error);

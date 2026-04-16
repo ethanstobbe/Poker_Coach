@@ -531,6 +531,61 @@ body::after{
 .rp-street{color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1.5px;font-size:9px;min-width:55px;}
 .rp-decision{font-weight:600;}
 
+/* ═══════════════ AI PANEL (RIGHT SIDE) ═══════════════ */
+#ai-panel{
+  position:fixed;
+  top:54px;
+  right:14px;
+  bottom:100px;
+  width:304px;
+  z-index:50;
+
+  display:flex;
+  flex-direction:column;
+
+  background:var(--glass);
+  border:1px solid rgba(201,168,76,0.16);
+  border-radius:4px;
+
+  backdrop-filter:blur(22px);
+  box-shadow:0 24px 60px rgba(0,0,0,0.92);
+
+  overflow:hidden;
+}
+
+#ai-header{
+  padding:12px 14px;
+  font-family:'Cinzel',serif;
+  font-size:12px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+
+  color:var(--gold2);
+  background:rgba(201,168,76,0.06);
+
+  border-bottom:1px solid rgba(201,168,76,0.12);
+}
+
+#ai-content{
+  flex:1;
+  padding:14px;
+  overflow-y:auto;
+
+  font-size:12px;
+  line-height:1.7;
+  color:rgba(255,255,255,0.75);
+  font-style:italic;
+}
+
+/* nice scrollbar */
+#ai-content::-webkit-scrollbar{
+  width:6px;
+}
+#ai-content::-webkit-scrollbar-thumb{
+  background:rgba(201,168,76,0.3);
+  border-radius:4px;
+}
+
 /* ═══════════════════ ACTION BAR ═══════════════════ */
 #action-bar{
   position:fixed;bottom:0;left:0;right:0;z-index:60;
@@ -806,6 +861,12 @@ body::after{
     <div class="rp-total-label">Score</div>
     <div class="rp-total-score" id="rp-total">— / 10</div>
   </div>
+</div>
+
+<!-- ═══════════════ AI PANEL ═══════════════ -->
+<div id="ai-panel">
+  <div id="ai-header">AI Coach</div>
+  <div id="ai-content">Make a move to get feedback...</div>
 </div>
 
 <!-- ═══════════════ MAIN SCENE ═══════════════ -->
@@ -1370,9 +1431,33 @@ async function submitDecision(userAction, opts){
       })
     });
     const data = await res.json();
+
+    if (!res.ok) {
+      showError(data.error || "Failed to submit decision");
+      return;
+    }
+
+    // Send prompt to OpenAI for feedback
+    const aiRes = await fetch(`${API_BASE}/ai/explain`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({
+        scenario: currentScenario,
+        userAction,
+        result: data
+      })
+    });
+
+    const aiData = await aiRes.json();
+
     document.getElementById("loader").style.display = "none";
-    if(!res.ok){ showError(data.error || "Error"); return; }
     showResultModal(data);
+
+    if (aiData?.explanation) {
+      const el = document.getElementById("ai-content");
+      if (el) el.textContent = aiData.explanation;
+    }
+
     await completeGame();
   } catch(err){
     document.getElementById("loader").style.display = "none";

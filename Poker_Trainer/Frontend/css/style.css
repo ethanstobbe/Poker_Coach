@@ -1,0 +1,496 @@
+/* =========================
+   GLOBAL / SHARED UI
+========================= */
+
+body {
+  background: radial-gradient(circle at center, #0d2c1c 0%, #06140e 70%);
+  color: #eee;
+  font-family: Arial, sans-serif;
+  margin: 0;
+
+  /* smoother animation performance */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Generic panel (login/profile pages) */
+
+.card {
+  background: #1e1e1e;
+  padding: 30px;
+  border-radius: 12px;
+  width: 400px;
+  text-align: center;
+
+  box-shadow:
+    0 0 20px rgba(0,0,0,0.6),
+    0 10px 30px rgba(0,0,0,0.5);
+}
+
+input, button {
+  display: block;
+  margin: 10px auto;
+  padding: 12px;
+  width: 220px;
+}
+
+button {
+
+  background: linear-gradient(#3a3a3a,#2a2a2a);
+
+  color: #fff;
+
+  border: none;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-size: 16px;
+
+  transition: all 0.2s ease;
+
+}
+
+button:hover {
+
+  background: #575757;
+
+  transform: scale(1.05);
+
+}
+
+/* =========================
+   OPPONENT CARD BACKS
+========================= */
+
+.opp-card {
+
+  width: 20px;
+  height: 28px;
+
+  border-radius: 3px;
+
+  display: inline-block;
+
+  margin: 0 2px;
+
+  background: linear-gradient(135deg,#1e3d54,#112233);
+
+  border: 1px solid #2a5870;
+
+  box-shadow:
+    0 2px 5px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+
+  /* GPU acceleration */
+  transform: translateZ(0);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+}
+
+/* Back pattern when JS adds class */
+
+.opp-card.card-back {
+
+  background: repeating-linear-gradient(
+    45deg,
+    #1a4c8b,
+    #1a4c8b 3px,
+    #0f2a4d 3px,
+    #0f2a4d 6px
+  ) !important;
+
+  border: 1px solid #2e6fa3 !important;
+
+  position: relative;
+
+  overflow: hidden;
+
+}
+
+/* inner pattern highlight */
+
+.opp-card.card-back::after {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 3px;
+
+  border-radius: 2px;
+
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.12),
+      rgba(255,255,255,0.12) 2px,
+      rgba(0,0,0,0.0) 2px,
+      rgba(0,0,0,0.0) 6px
+    );
+
+  opacity: 0.65;
+
+}
+
+/* Hover lift effect */
+
+.opp-card:hover {
+
+  transform: translateY(-4px) scale(1.05);
+
+  box-shadow:
+    0 6px 12px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+
+}
+
+/* =========================
+   COMMUNITY CARD FLIP
+========================= */
+
+.flip {
+  animation: flipIn 260ms cubic-bezier(.25,.8,.25,1);
+  transform-origin: center;
+}
+
+@keyframes flipIn {
+
+  0% {
+    transform: rotateY(0deg) scale(1);
+  }
+
+  45% {
+    transform: rotateY(90deg) scale(0.95);
+  }
+
+  55% {
+    transform: rotateY(90deg) scale(0.95);
+  }
+
+  100% {
+    transform: rotateY(0deg) scale(1);
+  }
+
+}
+
+/* =========================
+   CARD DEAL ANIMATION
+   used by JS fly animation
+========================= */
+
+.deal-fly {
+
+  animation: dealFly 260ms cubic-bezier(.2,.9,.2,1);
+
+}
+
+@keyframes dealFly {
+
+  0% {
+
+    transform: translateY(-25px) scale(0.7);
+
+    opacity: 0;
+
+  }
+
+  100% {
+
+    transform: translateY(0px) scale(1);
+
+    opacity: 1;
+
+  }
+
+}
+
+/* =========================
+   POT / CHIP PULSE
+========================= */
+
+.pot-win {
+
+  animation: potPulse 0.6s ease;
+
+}
+
+@keyframes potPulse {
+
+  0% {
+
+    transform: scale(1);
+
+  }
+
+  50% {
+
+    transform: scale(1.15);
+
+  }
+
+  100% {
+
+    transform: scale(1);
+
+  }
+
+}
+
+/* =========================
+   CONTROL BAR (BOTTOM ACTIONS)
+   Drag-to-hide panel
+========================= */
+
+#controls-wrapper {
+
+  position: fixed;
+
+  bottom: 0;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  z-index: 100;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+
+  will-change: transform;
+
+}
+
+/* Drag handle */
+
+#controls-handle {
+
+  width: 60px;
+
+  height: 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  cursor: grab;
+
+  user-select: none;
+
+  margin-bottom: -1px;
+
+}
+
+#controls-handle::before {
+
+  content: '';
+
+  width: 36px;
+
+  height: 4px;
+
+  border-radius: 2px;
+
+  background: rgba(255,255,255,0.25);
+
+  transition: background 0.2s;
+
+}
+
+#controls-handle:hover::before {
+
+  background: rgba(201,168,76,0.7);
+
+}
+
+#controls-handle.dragging {
+
+  cursor: grabbing;
+
+}
+
+#controls {
+
+  position: relative;
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 6px;
+
+  max-width: 95vw;
+
+  background: rgba(0,0,0,0.85);
+
+  padding: 10px 14px 14px;
+
+  border-radius: 12px 12px 0 0;
+
+  border: 1px solid rgba(255,255,255,0.07);
+
+  border-bottom: none;
+
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 -5px 20px rgba(0,0,0,0.6),
+    inset 0 1px rgba(255,255,255,0.06);
+
+}
+
+/* controls buttons */
+
+#controls button,
+#controls select,
+#controls input {
+
+  font-family: 'Rajdhani', sans-serif;
+
+  font-size: 11px;
+
+  padding: 6px 10px;
+
+  border-radius: 6px;
+
+  border: 1px solid rgba(255,255,255,0.15);
+
+  background: rgba(255,255,255,0.07);
+
+  color: #ddd;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+
+}
+
+#controls button:hover {
+
+  background: #c9a84c;
+
+  color: #111;
+
+  border-color: #c9a84c;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+
+}
+
+/* equity input */
+
+#equityInput {
+
+  width: 70px;
+
+}
+
+/* divider */
+
+.btn-divider {
+
+  width: 1px;
+
+  height: 22px;
+
+  background: rgba(255,255,255,0.1);
+
+}/* =========================
+   CARD DECK (CENTER)
+========================= */
+
+#deck {
+
+  position: absolute;
+
+  top: 42%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: 34px;
+  height: 46px;
+
+  pointer-events: none;
+
+}
+/* =========================
+   CARD DECK
+========================= */
+
+#deck {
+
+  position: absolute;
+
+  top: 38%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: 34px;
+  height: 46px;
+
+  z-index: 30;
+
+}
+
+/* stacked cards */
+
+.deck-card {
+
+  position: absolute;
+
+  width: 34px;
+  height: 46px;
+
+  border-radius: 4px;
+
+  background: repeating-linear-gradient(
+      45deg,
+      #1a4c8b,
+      #1a4c8b 3px,
+      #0f2a4d 3px,
+      #0f2a4d 6px
+  );
+
+  border: 1px solid #2e6fa3;
+
+  box-shadow:
+      0 3px 6px rgba(0,0,0,0.7),
+      inset 0 1px rgba(255,255,255,0.15);
+
+}
+
+/* stack offsets */
+
+.deck-card:nth-child(1){ transform: translateY(0px); }
+.deck-card:nth-child(2){ transform: translateY(3px); }
+.deck-card:nth-child(3){ transform: translateY(6px); }
+
+/* =========================
+   TABLE CONTAINER FIX
+========================= */
+
+#table-wrap{
+  position: relative;
+}

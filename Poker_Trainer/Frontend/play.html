@@ -81,7 +81,7 @@ body::after{
 
 /* ═══════════════════ SCENE ═══════════════════ */
 #scene{
-  position:fixed;top:44px;bottom:86px;left:0;right:0;
+  position:fixed;top:44px;bottom:118px;left:0;right:0;
   z-index:1;display:flex;align-items:center;justify-content:center;
 }
 
@@ -531,83 +531,71 @@ body::after{
 .rp-street{color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1.5px;font-size:9px;min-width:55px;}
 .rp-decision{font-weight:600;}
 
-/* ═══════════════════ ACTION BAR ═══════════════════ */
+/* ═══════════════════ ACTION TRAY ═══════════════════ */
 #action-bar{
-  position:fixed;bottom:0;left:0;right:0;z-index:60;
-  background:rgba(6,4,1,0.92);
-  border-top:1px solid rgba(201,168,76,0.18);
-  box-shadow:0 -8px 40px rgba(0,0,0,0.95);
-  backdrop-filter:blur(22px);
-  display:flex;flex-direction:column;
+  position:fixed;bottom:10px;left:50%;transform:translateX(-50%);
+  z-index:60;width:min(1120px,96vw);
+  background:rgba(6,4,1,0.9);
+  border:1px solid rgba(201,168,76,0.18);
+  border-radius:10px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.95);
+  backdrop-filter:blur(18px);
+  display:flex;flex-direction:column;gap:8px;
+  padding:10px;
 }
-
-/* Row 1 */
-#bar-row1{display:flex;align-items:stretch;height:50px;border-bottom:1px solid rgba(255,255,255,0.04);}
-#your-hand-panel{display:flex;align-items:center;gap:4px;padding:5px 10px;border-right:1px solid rgba(255,255,255,0.04);flex-shrink:0;}
-#your-hand-label{font-size:6px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);writing-mode:vertical-lr;transform:rotate(180deg);}
-#your-hand-cards{display:flex;gap:2px;}
-.mini-card{width:20px;height:28px;border-radius:3px;background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.1);display:flex;justify-content:center;align-items:center;font-size:8px;font-weight:900;color:#111;position:relative;}
-.mini-card.filled{background:linear-gradient(155deg,#fff,#efefef);border:1px solid rgba(0,0,0,0.1);box-shadow:0 2px 5px rgba(0,0,0,0.6);}
-.mini-card.red{color:var(--red-card);}
-
-#phase-hint-cell{display:flex;align-items:center;padding:0 10px;border-right:1px solid rgba(255,255,255,0.04);flex-shrink:0;min-width:160px;}
-#phase-hint{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);line-height:1.5;}
+#phase-hint{
+  font-size:10px;
+  letter-spacing:1.4px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.6);
+  text-align:center;
+  line-height:1.4;
+}
 
 /* Button groups */
-#preflop-btns{display:none;align-items:center;gap:4px;flex:1;padding:4px 5px;}
-#preflop-btns.active{display:flex;}
-#postflop-btns{display:flex;align-items:center;gap:3px;flex:1;padding:4px 5px;}
-#postflop-btns.hidden{display:none;}
-
-#equity-section{display:flex;align-items:center;gap:5px;padding:5px 10px;border-left:1px solid rgba(255,255,255,0.04);flex-shrink:0;}
-#equity-label{font-size:7px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);white-space:nowrap;}
-#equityInput{
-  font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;
-  width:60px;text-align:center;
-  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:3px;
-  color:#fff;padding:4px 4px;outline:none;transition:all .15s;
+#action-buttons{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
 }
-#equityInput:focus{border-color:var(--gold);background:rgba(201,168,76,0.07);box-shadow:0 0 0 2px rgba(201,168,76,0.12);}
-#equityInput:disabled{opacity:.2;}
-#finish-section{display:flex;align-items:center;padding:5px 8px;border-left:1px solid rgba(255,255,255,0.04);flex-shrink:0;}
-
-/* Row 2 */
-#bar-row2{display:flex;align-items:center;gap:7px;height:36px;padding:0 10px;}
-#difficulty{background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.12);border-radius:2px;color:rgba(255,255,255,0.5);font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;outline:none;cursor:pointer;height:24px;}
-.stat-pill{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:2px;padding:2px 8px;}
-.stat-key{font-size:7px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25);}
-.stat-val{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:var(--gold2);}
-.stat-val.green{color:#55ee88;}
-.bar2-spacer{flex:1;}.row2-divider{width:1px;height:18px;background:rgba(255,255,255,0.05);flex-shrink:0;}
-.br-info{display:flex;flex-direction:column;padding:0 5px;}
-.br-info-key{font-size:6px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25);}
-.br-info-val{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--gold2);}
-.br-info-val.green{color:#55ee88;}
+#btn-new-hand{
+  flex:0 0 170px;
+  min-width:170px;
+}
+#preflop-btns,#postflop-btns{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex:1;
+  min-width:0;
+}
 
 /* ── BUTTON BASE ── */
 .ab{
   font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;
   letter-spacing:1.5px;text-transform:uppercase;
-  border-radius:2px;cursor:pointer;height:40px;padding:0 10px;
+  border-radius:6px;cursor:pointer;height:42px;padding:0 12px;
   border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);
   transition:all .13s;white-space:nowrap;flex:1;
   display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
+  min-width:0;
 }
 .ab::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.03),transparent);pointer-events:none;}
 .ab:not(:disabled):hover{filter:brightness(1.3);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.5);}
 .ab:not(:disabled):active{transform:translateY(0);filter:brightness(1.1);}
 .ab:disabled{opacity:.2;cursor:not-allowed;}
 
-.ab-new{background:linear-gradient(180deg,rgba(26,100,26,0.92),rgba(14,62,14,0.92));border-color:rgba(40,130,40,0.55);color:#aaeeaa;flex:0 0 auto;padding:0 16px;height:24px;font-size:10px;border-radius:2px;}
-.ab-fold{background:linear-gradient(180deg,rgba(52,14,14,0.95),rgba(30,6,6,0.95));border-color:rgba(130,26,26,0.5);color:#ffaaaa;flex:0 0 auto;}
+.ab-new{background:linear-gradient(180deg,rgba(26,100,26,0.92),rgba(14,62,14,0.92));border-color:rgba(40,130,40,0.55);color:#aaeeaa;}
+.ab-fold{background:linear-gradient(180deg,rgba(52,14,14,0.95),rgba(30,6,6,0.95));border-color:rgba(130,26,26,0.5);color:#ffaaaa;}
 .ab-fold:not(:disabled):hover{background:linear-gradient(180deg,rgba(72,18,18,0.95),rgba(48,10,10,0.95));}
-.ab-check{background:linear-gradient(180deg,rgba(12,28,88,0.95),rgba(7,16,54,0.95));border-color:rgba(30,60,160,0.5);color:#99bbff;flex:0 0 auto;}
+.ab-check{background:linear-gradient(180deg,rgba(12,28,88,0.95),rgba(7,16,54,0.95));border-color:rgba(30,60,160,0.5);color:#99bbff;}
 .ab-check:not(:disabled):hover{background:linear-gradient(180deg,rgba(20,44,120,0.95),rgba(12,28,88,0.95));}
 .ab-bet{background:linear-gradient(180deg,rgba(38,30,12,0.95),rgba(22,18,6,0.95));border-color:rgba(96,80,24,0.5);color:var(--gold2);}
 .ab-bet:not(:disabled):hover{background:linear-gradient(180deg,rgba(52,42,16,0.95),rgba(36,28,8,0.95));}
 .ab-allin{background:linear-gradient(180deg,rgba(98,12,12,0.95),rgba(66,6,6,0.95));border-color:rgba(196,28,28,0.55);color:#fff;font-weight:900;font-size:12px;}
 .ab-allin:not(:disabled):hover{background:linear-gradient(180deg,rgba(120,16,16,0.95),rgba(98,10,10,0.95));}
-.ab-submit{background:linear-gradient(180deg,rgba(12,84,24,0.95),rgba(7,52,14,0.95));border-color:rgba(38,130,38,0.55);color:#aaeeaa;font-weight:900;flex:0 0 auto;padding:0 14px;}
+.ab-submit{background:linear-gradient(180deg,rgba(12,84,24,0.95),rgba(7,52,14,0.95));border-color:rgba(38,130,38,0.55);color:#aaeeaa;font-weight:900;padding:0 14px;}
 .ab-submit:not(:disabled):hover{background:linear-gradient(180deg,rgba(18,110,32,0.95),rgba(12,84,24,0.95));}
 .ab-finish{background:linear-gradient(180deg,rgba(68,50,0,0.95),rgba(42,30,0,0.95));border-color:rgba(201,168,76,0.4);color:var(--gold2);font-weight:900;flex:0 0 auto;padding:0 14px;}
 .ab-finish:not(:disabled):hover{background:linear-gradient(180deg,rgba(86,64,0,0.95),rgba(58,42,0,0.95));}
@@ -621,8 +609,9 @@ body::after{
 .btn-selected{background:rgba(201,168,76,0.15)!important;border-color:var(--gold)!important;color:var(--gold2)!important;box-shadow:0 0 10px rgba(201,168,76,0.25),0 3px 10px rgba(0,0,0,0.4);}
 
 /* ── Bet % dropdown ── */
-#bet-dropdown-wrap{position:relative;flex-shrink:0;}
+#bet-dropdown-wrap{position:relative;flex:1;}
 #btn-bet-pct{flex:0 0 auto;padding:0 11px;min-width:72px;}
+#btn-allin{flex:0.9;}
 #bet-menu{display:none;position:absolute;bottom:calc(100% + 5px);left:0;background:rgba(8,5,1,0.97);border:1px solid rgba(201,168,76,0.28);border-radius:3px;overflow:hidden;z-index:200;min-width:80px;box-shadow:0 -8px 24px rgba(0,0,0,0.9);backdrop-filter:blur(16px);}
 #bet-menu.open{display:block;}
 #bet-menu button{display:block;width:100%;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:8px 14px;text-align:left;background:transparent;border:none;color:var(--gold2);cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);transition:background .1s;}
@@ -781,7 +770,6 @@ body::after{
   </div>
   <div class="tb-center">POKER TRAINER</div>
   <div class="tb-right">
-    <button id="btn-finish" onclick="completeGame()" class="ab-dark" disabled>Finish &amp; Save</button>
     <button onclick="goMenu()">Menu</button>
     <button onclick="logout()" class="ab-dark">Logout</button>
   </div>
@@ -1002,27 +990,6 @@ body::after{
   </div>
 </div>
 
-<!-- ═══════════════ INFO PANEL (bottom-left overlay) ═══════════════ -->
-<div id="info-panel">
-  <div class="info-row">
-    <span class="info-key">Blinds</span>
-    <span class="info-val white" id="info-blinds">0.5 / 1 BB</span>
-  </div>
-  <div class="info-row">
-    <span class="info-key">Pot Total</span>
-    <span class="info-val" id="info-pot">0 BB</span>
-  </div>
-  <div class="info-row">
-    <span class="info-key">Status</span>
-    <span class="info-val green" id="info-status">WAITING</span>
-  </div>
-  <div class="info-row">
-    <span class="info-key">Players</span>
-    <span class="info-val white" id="info-players">9</span>
-  </div>
-</div>
-
-
 <!-- ═══════════════ WINNER ANNOUNCEMENT ═══════════════ -->
 <div id="winner-overlay" onclick="closeWinnerOverlay()">
   <div id="winner-card">
@@ -1035,35 +1002,24 @@ body::after{
 
 <!-- ═══════════════ BOTTOM ACTION BAR ═══════════════ -->
 <div id="action-bar">
-
-  <!-- ── TOP ROW: cards · hint · actions · equity · finish ── -->
-  <!-- ROW 1: cards · hint · BET buttons only · equity · submit · finish -->
-  <div id="bar-row1">
-
-    <div id="your-hand-panel">
-      <div id="your-hand-label">Your Hand</div>
-      <div id="your-hand-cards">
-        <div class="mini-card" id="mini-card1"></div>
-        <div class="mini-card" id="mini-card2"></div>
-      </div>
-    </div>
-
-    <div id="phase-hint-cell">
-      <div id="phase-hint">Press NEW HAND to start</div>
-    </div>
+  <div id="phase-hint">Press NEW HAND to start</div>
+  <div id="action-buttons">
+    <button class="ab ab-new" id="btn-new-hand" onclick="startGame()">⟳ New Hand</button>
 
     <!-- PREFLOP buttons (shown during preflop phase) -->
     <div id="preflop-btns">
-      <button class="ab ab-fold  action-btn preflop-btn" data-action="fold"  onclick="preflopAction('fold')">Fold</button>
+      <button class="ab ab-fold action-btn preflop-btn" data-action="fold" onclick="preflopAction('fold')">Fold</button>
       <button class="ab ab-call-pf action-btn preflop-btn" data-action="call" onclick="preflopAction('call')">Call</button>
       <button class="ab ab-raise action-btn preflop-btn" data-action="raise" onclick="preflopAction('raise')">Raise</button>
     </div>
 
     <!-- POSTFLOP buttons (shown during postflop playing phase) -->
     <div id="postflop-btns">
+      <button class="ab ab-fold action-btn" id="btn-fold" data-action="fold" onclick="playerAction('fold')">Fold</button>
+      <button class="ab ab-check action-btn" id="btn-check" data-action="check" onclick="playerAction('check')">Check / Call</button>
       <div id="bet-dropdown-wrap">
         <button class="ab ab-bet action-btn" id="btn-bet-pct" data-action="bet33" onclick="toggleBetMenu(event)">
-          Bet % ▾
+          Bet 33% ▾
         </button>
         <div id="bet-menu">
           <button onclick="selectBet('bet33')">33%</button>
@@ -1074,20 +1030,7 @@ body::after{
       <button class="ab ab-bet action-btn" data-action="bet100" onclick="playerAction('bet100')">Bet Pot</button>
       <button class="ab ab-allin action-btn" id="btn-allin" data-action="allin" onclick="playerAction('allin')">All In</button>
     </div>
-
-  </div><!-- /#bar-row1 -->
-
-  <!-- ROW 2: New Hand · Fold · Check | stats -->
-  <div id="bar-row2">
-    <button class="ab ab-new" id="btn-new-hand" onclick="startGame()">⟳ New Hand</button>
-    <button class="ab ab-fold action-btn" id="btn-fold" data-action="fold" onclick="playerAction('fold')">Fold</button>
-    <button class="ab ab-check action-btn" id="btn-check" data-action="check" onclick="playerAction('check')">Check / Call</button>
-    <div class="row2-divider"></div>
-    <div class="br-info"><span class="br-info-key">Blinds</span><span class="br-info-val">0.5 / 1 BB</span></div>
-    <div class="br-info"><span class="br-info-key">Pot</span><span class="br-info-val" id="info-pot2">0 BB</span></div>
-    <div class="br-info"><span class="br-info-key">Status</span><span class="br-info-val green" id="info-status2">—</span></div>
   </div>
-
 </div><!-- /#action-bar -->
 
 <!-- legacy hidden -->
@@ -1440,8 +1383,6 @@ async function completeGame(){
     const res = await fetch(`${API_BASE}/game/${sid}/complete`, { method: "POST", headers: authHeaders() });
     const data = await res.json();
     if(!res.ok){ showError(data.error); return; }
-    const bFinish = document.getElementById("btn-finish");
-    if(bFinish){ bFinish.disabled = false; bFinish.onclick = () => window.location.href = "profile.html"; }
     if(window.SoundEngine) data.isCorrect ? SoundEngine.play("win") : SoundEngine.play("lose");
     if(typeof showWinnerOverlay === "function") showWinnerOverlay(data.isCorrect, data.earningsGain ?? 0);
   } catch(err){ showError(err.message); }

@@ -93,6 +93,20 @@ body::before{
 .lb-total-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
 
 /* ── PODIUM ── */
+.top3-card{
+  background:rgba(14,18,28,0.92);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px 20px 10px;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+.top3-title{
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--muted);
+  text-align:center;
+}
 .podium{
   display:flex; justify-content:center; align-items:flex-end;
   gap:16px; padding:10px 0 4px;
@@ -118,6 +132,12 @@ body::before{
 }
 .podium-name{font-weight:700;letter-spacing:1px;font-size:13px;margin-bottom:4px;}
 .podium-xp{font-size:11px;color:var(--muted);margin-bottom:6px;}
+.podium-stats{
+  font-size:10px;
+  color:var(--muted);
+  margin-bottom:8px;
+  letter-spacing:.3px;
+}
 .podium-block{
   border-radius:10px 10px 0 0;
   display:flex; align-items:center; justify-content:center;
@@ -137,14 +157,14 @@ body::before{
   box-shadow:0 0 20px rgba(0,0,0,0.5);
 }
 .lb-header-row{
-  display:grid; grid-template-columns:54px 1fr 130px 100px;
+  display:grid; grid-template-columns:54px minmax(180px,1fr) 130px 120px 120px 100px;
   padding:12px 20px;
   font-size:9px; letter-spacing:2px; text-transform:uppercase;
   color:var(--muted); background:rgba(255,255,255,0.025);
   border-bottom:1px solid rgba(255,255,255,0.06);
 }
 .lb-row{
-  display:grid; grid-template-columns:54px 1fr 130px 100px;
+  display:grid; grid-template-columns:54px minmax(180px,1fr) 130px 120px 120px 100px;
   padding:13px 20px; align-items:center;
   border-bottom:1px solid rgba(255,255,255,0.04);
   transition:.15s; font-size:13px;
@@ -190,6 +210,12 @@ body::before{
 .rank-pill.Unranked {color:#888;border-color:#555;background:rgba(100,100,100,0.10);}
 
 .xp-cell{font-family:'Bebas Neue';font-size:17px;letter-spacing:1px;color:var(--accent2);}
+.hands-cell{
+  font-family:'Bebas Neue';
+  font-size:16px;
+  letter-spacing:1px;
+  color:#c3cbe8;
+}
 
 /* empty / loading */
 .empty-state{
@@ -241,7 +267,10 @@ body::before{
   </div>
 
   <!-- PODIUM (top 3) -->
-  <div class="podium" id="podium"></div>
+  <div class="top3-card">
+    <div class="top3-title">Top 3 Players By XP</div>
+    <div class="podium" id="podium"></div>
+  </div>
 
   <!-- FULL TABLE -->
   <div class="lb-table-card">
@@ -249,6 +278,8 @@ body::before{
       <div>#</div>
       <div>Player</div>
       <div>Rank</div>
+      <div>Hands Played</div>
+      <div>Hands Won</div>
       <div>XP</div>
     </div>
     <div id="lbRows">
@@ -281,16 +312,17 @@ window.addEventListener("DOMContentLoaded", async () => {
   } catch(_){}
 
   showLoading(true);
-  await loadLeaderboard();
+  await loadLeaderboardPage();
   showLoading(false);
 });
 
-/* Override loadLeaderboard from app.js with our richer version */
-async function loadLeaderboard() {
+/* Page-specific loader (avoid app.js function name collisions) */
+async function loadLeaderboardPage() {
   try {
     const res  = await fetch(`${API_BASE}/leaderboards`);
-    const data = await res.json();
-    if (!res.ok) { showError(data.error || "Failed to load"); return; }
+    const raw = await res.json();
+    if (!res.ok) { showError(raw?.error || "Failed to load"); return; }
+    const data = normalizeLeaderboard(raw);
 
     /* Header count */
     document.getElementById("totalPlayers").textContent = data.length;
@@ -308,6 +340,32 @@ async function loadLeaderboard() {
   }
 }
 
+function normalizeLeaderboard(raw) {
+  const list = Array.isArray(raw)
+    ? raw
+    : Array.isArray(raw?.leaderboard)
+      ? raw.leaderboard
+      : [];
+
+  return list
+    .map((p, i) => {
+      const username = p?.username || p?.user_name || p?.name || "Player";
+      const rank = p?.rank || p?.rank_name || "Unranked";
+      const playedRaw = p?.handsPlayed ?? p?.hands_played ?? p?.scenarios_played ?? 0;
+      const wonRaw = p?.handsWon ?? p?.hands_won ?? p?.scenarios_won ?? 0;
+      const xpRaw = p?.xp ?? p?.XP ?? 0;
+      return {
+        position: Number(p?.position ?? i + 1),
+        username,
+        rank,
+        handsPlayed: Number(playedRaw) || 0,
+        handsWon: Number(wonRaw) || 0,
+        xp: Number(xpRaw) || 0,
+      };
+    })
+    .sort((a, b) => b.xp - a.xp);
+}
+
 function buildPodium(top) {
   const ORDER = [1, 0, 2]; /* visual order: 2nd, 1st, 3rd */
   const podium = document.getElementById("podium");
@@ -322,8 +380,9 @@ function buildPodium(top) {
     seat.innerHTML = `
       <div class="podium-avatar">${POS_EMOJI[idx] || RANK_AVATARS[p.rank] || "👤"}</div>
       <div class="podium-name">${p.username}</div>
-      <div class="podium-xp">${p.xp} XP</div>
+      <div class="podium-stats">${p.handsWon ?? 0}W / ${p.handsPlayed ?? 0} Played</div>
       <div class="podium-block">#${place}</div>
+      <div class="podium-xp">${p.xp} XP</div>
     `;
     podium.appendChild(seat);
   });
@@ -355,6 +414,8 @@ function buildRows(players) {
         <div class="lb-name">${p.username}${isMe ? '<span class="lb-me-tag">YOU</span>' : ''}</div>
       </div>
       <div><span class="rank-pill ${rank}">${rank}</span></div>
+      <div class="hands-cell">${p.handsPlayed ?? 0}</div>
+      <div class="hands-cell">${p.handsWon ?? 0}</div>
       <div class="xp-cell">${p.xp}</div>
     `;
     rows.appendChild(row);

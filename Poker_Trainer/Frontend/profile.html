@@ -107,6 +107,8 @@ body::before{
 .rank-badge.Gold     {color:#ffd700;border-color:#ffd700;background:rgba(255,215,0,0.12);}
 .rank-badge.Platinum {color:#a0d8ef;border-color:#a0d8ef;background:rgba(160,216,239,0.12);}
 .rank-badge.Diamond  {color:#b9f2ff;border-color:#b9f2ff;background:rgba(185,242,255,0.16);}
+.rank-badge.Copper   {color:#d08b5b;border-color:#d08b5b;background:rgba(208,139,91,0.12);}
+.rank-badge.Legend   {color:#ff66cc;border-color:#ff66cc;background:rgba(255,102,204,0.14);}
 .rank-badge.Unranked {color:#888;border-color:#555;background:rgba(100,100,100,0.10);}
 
 /* XP bar */
@@ -172,6 +174,27 @@ body::before{
 .graph-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
 .graph-title{font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;color:var(--accent2);}
 .graph-subtitle{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:1px;text-transform:uppercase;}
+.graph-controls{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.graph-controls label{
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+.graph-select{
+  background:rgba(255,255,255,0.05);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:6px 10px;
+  font-family:'Rajdhani',sans-serif;
+  font-size:12px;
+  font-weight:700;
+}
 .graph-wrap{height:200px;position:relative;}
 
 /* ── RECENT ACTIVITY ── */
@@ -301,7 +324,15 @@ body::before{
     <div class="graph-header">
       <div>
         <div class="graph-title">Performance</div>
-        <div class="graph-subtitle">Win rate progression</div>
+        <div class="graph-subtitle" id="graphSubtitle">Win rate progression</div>
+      </div>
+      <div class="graph-controls">
+        <label for="graphWindowSelect">Window</label>
+        <select id="graphWindowSelect" class="graph-select">
+          <option value="10">Last 10</option>
+          <option value="20">Last 20</option>
+          <option value="30" selected>Last 30</option>
+        </select>
       </div>
     </div>
     <div class="graph-wrap">
@@ -320,9 +351,37 @@ body::before{
 </div><!-- /.profile-wrapper -->
 
 <script>
-const RANK_XP = { Bronze:0, Silver:100, Gold:300, Platinum:600, Diamond:1000 };
-const XP_NEXT = { Bronze:100, Silver:300, Gold:600, Platinum:1000, Diamond:null };
-const RANK_AVATARS = { Bronze:'🥉', Silver:'🥈', Gold:'🥇', Platinum:'💎', Diamond:'👑', Unranked:'🎯' };
+const RANK_XP = {
+  Copper: 0,
+  Bronze: 100,
+  Silver: 300,
+  Gold: 600,
+  Platinum: 1000,
+  Diamond: 1500,
+  Legend: 2500,
+};
+const XP_NEXT = {
+  Copper: 100,
+  Bronze: 300,
+  Silver: 600,
+  Gold: 1000,
+  Platinum: 1500,
+  Diamond: 2500,
+  Legend: null,
+};
+const RANK_AVATARS = { Copper:'🟤', Bronze:'🥉', Silver:'🥈', Gold:'🥇', Platinum:'💎', Diamond:'👑', Legend:'🔥', Unranked:'🎯' };
+let perfChart = null;
+let profileData = null;
+
+function rankFromXp(xp) {
+  if (xp >= 2500) return "Legend";
+  if (xp >= 1500) return "Diamond";
+  if (xp >= 1000) return "Platinum";
+  if (xp >= 600) return "Gold";
+  if (xp >= 300) return "Silver";
+  if (xp >= 100) return "Bronze";
+  return "Copper";
+}
 
 window.addEventListener("DOMContentLoaded", async () => {
   requireAuth();
@@ -332,11 +391,13 @@ window.addEventListener("DOMContentLoaded", async () => {
   showLoading(false);
 
   if (!data) return;
+  profileData = data;
 
   /* ── Username & rank ── */
   document.getElementById("username").textContent   = data.username || "Player";
 
-  const rank = data.rank || "Unranked";
+  const xp       = Number(data.xp) || 0;
+  const rank = RANK_XP[data.rank] != null ? data.rank : rankFromXp(xp);
   const badge = document.getElementById("rankBadge");
   badge.textContent  = rank;
   badge.className    = `rank-badge ${rank}`;
@@ -357,7 +418,6 @@ if (data.avatar_url) {
 }
 
   /* ── XP bar ── */
-  const xp       = data.xp || 0;
   const rankXp   = RANK_XP[rank]  ?? 0;
   const nextXp   = XP_NEXT[rank];
   const pct      = nextXp ? Math.min(100, Math.round(((xp - rankXp) / (nextXp - rankXp)) * 100)) : 100;
@@ -377,27 +437,51 @@ if (data.avatar_url) {
 
   /* ── Chart — build a simple visual from what we have ── */
   buildChart(data);
+
+  const graphWindowSelect = document.getElementById("graphWindowSelect");
+  if (graphWindowSelect) {
+    graphWindowSelect.addEventListener("change", () => {
+      buildChart(profileData);
+    });
+  }
 });
 
 function buildChart(data) {
-  const played  = data.handsPlayed || 0;
-  const winrate = data.winrate     || 0;
+  const scores = Array.isArray(data.recentCompletedScores) ? data.recentCompletedScores : [];
+  const graphWindowSelect = document.getElementById("graphWindowSelect");
+  const windowSize = Number(graphWindowSelect?.value) || 30;
+  const blocks = [];
 
-  /* Build a simple "session estimate" curve that ends at current winrate */
-  const points = 6;
-  const labels = [];
-  const values = [];
-  for (let i = 1; i <= points; i++) {
-    labels.push(`S${i}`);
-    /* smooth curve converging toward current winrate */
-    const t = i / points;
-    values.push(Math.max(0, Math.min(100, Math.round(50 + (winrate - 50) * t + (Math.random() * 10 - 5)))));
+  for (let i = 0; i < scores.length; i += windowSize) {
+    const chunk = scores.slice(i, i + windowSize);
+    if (!chunk.length) continue;
+    const sum = chunk.reduce((acc, n) => acc + (Number(n) || 0), 0);
+    const pct = Math.round((sum / (chunk.length * 10)) * 100);
+    blocks.push({
+      label: `${i + 1}-${i + chunk.length}`,
+      value: Math.max(0, Math.min(100, pct)),
+    });
   }
-  /* Last point is exactly current winrate */
-  values[points - 1] = winrate;
+
+  const labels = blocks.map(b => b.label);
+  const values = blocks.map(b => b.value);
+  const subtitle = document.getElementById("graphSubtitle");
+
+  if (subtitle) {
+    const count = scores.length;
+    subtitle.textContent = count > 0
+      ? `Completed hands ${count} shown in ${windowSize}-hand blocks`
+      : "No completed hands yet";
+  }
+
+  if (!values.length) {
+    labels.push("No Data");
+    values.push(0);
+  }
 
   const ctx = document.getElementById("perfChart");
-  new Chart(ctx, {
+  if (perfChart) perfChart.destroy();
+  perfChart = new Chart(ctx, {
     type: "line",
     data: {
       labels,

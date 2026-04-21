@@ -149,6 +149,39 @@ router.get("/me", async (req, res) => {
     const winrate = user.correct_play_percentage
       ?? (played > 0 ? Math.round((won / played) * 100) : 0);
 
+    const { data: recentSessions, error: sessionsErr } = await supabaseAdmin
+      .from("sessions")
+      .select("id, score, status, completed_at")
+      .eq("user_id", user.user_id)
+      .eq("status", "completed")
+      .order("completed_at", { ascending: true });
+
+    if (sessionsErr) {
+      console.error("[users/me] sessions query error:", sessionsErr);
+      return res.status(500).json({ error: "Failed to load user sessions", detail: sessionsErr.message });
+    }
+
+    const chartSessions = recentSessions || [];
+    let runningScore = 0;
+    const winrateSeries = chartSessions.map((session, idx) => {
+      const score = Number(session.score) || 0;
+      runningScore += score;
+      const handsCount = idx + 1;
+      const denominator = handsCount * 10;
+      const pct = denominator > 0 ? Math.round((runningScore / denominator) * 100) : 0;
+      return {
+        label: `H${handsCount}`,
+        winrate: Math.max(0, Math.min(100, pct)),
+      };
+    });
+
+    const recent30Slice = chartSessions.slice(-30);
+    const recent30ScoreTotal = recent30Slice.reduce((sum, s) => sum + (Number(s.score) || 0), 0);
+    const recent30Winrate = recent30Slice.length > 0
+      ? Math.round((recent30ScoreTotal / (recent30Slice.length * 10)) * 100)
+      : 0;
+    const recentCompletedScores = chartSessions.map(s => Number(s.score) || 0);
+
     res.json({
       username: user.username,
       avatar_url: user.avatar_url ?? null,
@@ -158,6 +191,10 @@ router.get("/me", async (req, res) => {
       handsWon: won,
       winrate,
       earnings: user.life_time_earning ?? 0,
+      recent30Winrate: Math.max(0, Math.min(100, recent30Winrate)),
+      recent30HandsCount: chartSessions.length,
+      recentCompletedScores,
+      winrateSeries,
     });
 
   } catch (err) {

@@ -586,7 +586,7 @@ body::after{
   border-radius:4px;
 }
 
-/* ══════════════════ AI CHAT INPUT ═════════════════ */
+/* ══════════════════ AI CHAT INPUT ═════════════════ 
 #ai-chat-input {
   border-top: 1px solid rgba(201,168,76,0.14);
   padding: 10px 12px;
@@ -608,7 +608,7 @@ body::after{
   resize: none;
   outline: none;
   box-sizing: border-box;
-  /* OLD: rows: 2; */
+  OLD: rows: 2;
 }
 #ai-chat-textarea:focus { border-color: rgba(201,168,76,0.55); }
 #ai-chat-textarea:disabled { opacity: 0.45; }
@@ -645,7 +645,7 @@ body::after{
 #ai-chat-send:hover { background: rgba(201,168,76,0.22); }
 #ai-chat-send:disabled { opacity: 0.35; cursor: default; }
 
-/* ─── Conversation messages ─────── */
+/* ─── Conversation messages ───────
 .ai-msg-ai {
   font-size: 12px;
   line-height: 1.7;
@@ -663,7 +663,7 @@ body::after{
   padding: 5px 8px;
   border-radius: 2px;
   margin-bottom: 6px;
-}
+}*/
 
 
 /* ═══════════════════ ACTION BAR ═══════════════════ */
@@ -898,7 +898,7 @@ body::after{
 .snd-btn.muted{opacity:0.28;text-decoration:line-through;}
 
 
-/* NEW: Experience selection button: */
+/* REMOVED: Experience selection button:
 #experience-btn {
   margin-left: 10px;
   font-size: 0.78rem;
@@ -914,7 +914,7 @@ body::after{
 }
 #experience-btn:hover { background: rgba(201,168,76,0.2); }
 
-/* Full-screen dimmed overlay */
+/* Full-screen dimmed overlay
 #exp-overlay {
   position: fixed;
   inset: 0;
@@ -925,7 +925,7 @@ body::after{
   justify-content: center;
 }
 
-/* Popup menu card */
+/* Popup menu card
 #exp-menu {
   background: #0f0f1a;
   border: 1px solid rgba(201,168,76,0.3);
@@ -945,7 +945,7 @@ body::after{
   text-align: center;
 }
 
-/* Each level row */
+/* Each level row
 .exp-option {
   padding: 10px 12px;
   border-radius: 5px;
@@ -957,7 +957,7 @@ body::after{
 }
 .exp-option:hover { background: rgba(201,168,76,0.08); }
 
-/* Selected state */
+/* Selected state
 .exp-option.exp-selected {
   color: #c9a84c;
   border-color: rgba(201,168,76,0.35);
@@ -973,7 +973,7 @@ body::after{
   margin-bottom: 3px;
 }
 
-/* Spade hidden by default, shown only on selected */
+/* Spade hidden by default, shown only on selected
 .exp-spade {
   font-size: 14px;
   visibility: hidden;
@@ -986,7 +986,7 @@ body::after{
   opacity: 0.75;
 }
 
-/* Action buttons */
+/* Action buttons
 #exp-actions {
   display: flex;
   gap: 10px;
@@ -1018,7 +1018,7 @@ body::after{
   font-family: inherit;
   transition: background 0.15s;
 }
-#exp-confirm:hover { background: #245724; }
+#exp-confirm:hover { background: #245724; }*/
 </style>
 </head>
 <body>
@@ -1065,46 +1065,13 @@ body::after{
   </div>
 </div>
 
-<!-- Change made for user selected experience level -->
-<!--OLD: Original AI panel layout 
-═══════════════ AI PANEL ═══════════════
+<!--═══════════════ AI PANEL ═══════════════-->
 <div id="ai-panel">
   <div id="ai-header">AI Coach</div>
   <div id="ai-content">Make a move to get feedback...</div>
-</div>-->
-
- 
-<!--═══════════════ AI PANEL ═══════════════-->
-<div id="ai-panel">
-  <div id="ai-header">
-    AI Coach
-    <!--OLD 2: Dropdown menu idea:
-    <select id="experience-level" title="Coach explanation level" style="margin-left:10px; font-size:0.78rem; background:#1a1a2e; color:#c9a84c; border:1px solid rgba(201,168,76,0.3); border-radius:4px; padding:2px 6px; cursor:pointer;">
-      <option value="newbie">Newbie</option>
-      <option value="beginner"selected>Beginner</option>
-      <option value="intermediate">Intermediate</option>
-      <option value="advanced">Advanced</option>
-    </select>-->
-
-    <!--NEW: Button to bring up user selection for experience level:-->
-    <button id="experience-btn" title="Change experience level">Experience: <span id="experience-label">Beginner</span></button>
-  </div>
-  <div id="ai-content">Make a move to get feedback...</div>
-
-  <!--NEW: Chat input for increased interactivity:-->
-  <div id="ai-chat-input" style="display:none;">
-    <textarea id="ai-chat-textarea" rows="2" maxlength="300"
-      placeholder="Ask a follow-up question... (Shift+Enter for newline)"></textarea>
-    <div id="ai-chat-footer">
-      <span id="ai-chat-charcount">0 / 300</span>
-      <span id="ai-chat-limit"></span>
-      <button id="ai-chat-send">Ask</button>
-    </div>
-  </div>
 </div>
 
-
-<!--NEW: HTML popup for experienceLevel: -->
+<!--REMOVED: HTML popup for experienceLevel:
 <div id="exp-overlay" style="display:none;">
   <div id="exp-menu">
     <div class="exp-title">Select Experience Level</div>
@@ -1129,7 +1096,7 @@ body::after{
       <button id="exp-confirm">Confirm</button>
     </div>
   </div>
-</div>
+</div>-->
 
 <!-- ═══════════════ MAIN SCENE ═══════════════ -->
 <div id="scene">
@@ -1586,7 +1553,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* OLD: Code for dropdown menu idea for experience level:
   const sel = document.getElementById("experience-level");
   sel.value = localStorage.getItem("experienceLevel") || "beginner";
-  sel.addEventListener("change", () => localStorage.setItem("experienceLevel", sel.value));*/
+  sel.addEventListener("change", () => localStorage.setItem("experienceLevel", sel.value));
 
   // NEW: Popup menu idea: 
     (function() {
@@ -1657,7 +1624,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sendChatMessage();
       }
     });
-    document.getElementById("ai-chat-send").addEventListener("click", sendChatMessage);
+    document.getElementById("ai-chat-send").addEventListener("click", sendChatMessage);*/
 });
 </script>
 
@@ -1828,8 +1795,6 @@ async function submitDecision(userAction, opts){
         scenario: currentScenario,
         userAction,
         result: data,
-        experienceLevel: localStorage.getItem("experienceLevel") || "beginner"
-        // Added for experience level change
       })
     });
 
@@ -1838,13 +1803,12 @@ async function submitDecision(userAction, opts){
     document.getElementById("loader").style.display = "none";
     showResultModal(data);
 
-    /* OLD: AI data explanation:
     if (aiData?.explanation) {
       const el = document.getElementById("ai-content");
       if (el) el.textContent = aiData.explanation;
-    }*/
+    }
 
-    // NEW: AI data explanation for chat history:
+    /* NEW: AI data explanation for chat history:
     if (aiData?.explanation) {
       const el = document.getElementById("ai-content");
       if (el) {
@@ -1862,7 +1826,8 @@ async function submitDecision(userAction, opts){
       if (sendBtn) sendBtn.disabled = false;
       if (textarea) { textarea.disabled = false; textarea.value = ""; textarea.placeholder = "Ask a follow-up question... (Shift+Enter for newline)"; }
       if (limitEl) limitEl.textContent = "";
-    }
+    }*/
+  
     await completeGame();
   } catch(err){
     document.getElementById("loader").style.display = "none";
@@ -1895,16 +1860,16 @@ function showResultModal(data){
 
   panel.style.display = "flex";
 
-  // NEW: For AI chat functionality.
+  /* REMOVED: AI chatbox
   // Shrink AI panel bottom to clear the result panel, then show chat input
   const aiPanel = document.getElementById("ai-panel");
   const chatInput = document.getElementById("ai-chat-input");
   if (aiPanel) aiPanel.style.bottom = (106 + panel.offsetHeight + 10) + "px";
-  if (chatInput) chatInput.style.display = "flex";
+  if (chatInput) chatInput.style.display = "flex";*/
 }
 
 
-// NEW: Main function for sending messages to the AI chatbot.
+/* Removed AI chatbot
 async function sendChatMessage() {
   const textarea = document.getElementById("ai-chat-textarea");
   const sendBtn = document.getElementById("ai-chat-send");
@@ -1967,7 +1932,7 @@ async function sendChatMessage() {
     textarea.disabled = false;
     sendBtn.disabled = false;
   }
-}
+}*/
 
 /* ─── POSTFLOP ACTION ───────────────────────────────────── */
 function playerAction(type){

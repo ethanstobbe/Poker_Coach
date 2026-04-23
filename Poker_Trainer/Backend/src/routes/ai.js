@@ -85,7 +85,7 @@ Correct action: ${result.correctAction?.type || "Unknown"} ${
         : ""
     }
 
-Explain in 2–4 sentences like a poker coach.
+Analyze and explain the user's decision in 2-4 sentences
 `;
 
     console.log("AI Explain Prompt:", prompt);
@@ -109,5 +109,4 @@ Explain in 2–4 sentences like a poker coach.
     res.status(500).json({ error: "Failed to generate explanation" });
   }
 });
-
 module.exports = router;

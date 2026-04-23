@@ -7,6 +7,41 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+function normalizeScenario(scenario) {
+  const heroCards = scenario.hero?.map(c => c.code) || [];
+
+  const board = [
+    ...(scenario.flop || []),
+    ...(scenario.turn || []),
+    ...(scenario.river || []),
+  ].map(c => c.code);
+
+  const heroPosition =
+    scenario.positions?.[scenario.heroSeat] || "Unknown";
+
+  const heroStack =
+    scenario.stacks?.[scenario.heroSeat] ?? 100;
+
+  const opponents = (scenario.players || [])
+    .filter(p => p.seat !== scenario.heroSeat)
+    .map(p => ({
+      seat: p.seat,
+      style: p.style,
+      stack: scenario.stacks?.[p.seat] ?? 0,
+    }));
+
+  const actions = scenario.flopActions || [];
+
+  return {
+    heroCards,
+    board,
+    heroPosition,
+    heroStack,
+    opponents,
+    actions,
+  };
+}
+
 router.post("/explain", async (req, res) => {
   try {
     const { scenario, userAction, result } = req.body;
@@ -15,29 +50,31 @@ router.post("/explain", async (req, res) => {
       return res.status(400).json({ error: "Missing required data" });
     }
 
-    console.log(scenario);
-    console.log(userAction);
+    const normalizedScenario = normalizeScenario(scenario);
+
+    console.log("Normalized scenario:", normalizedScenario);
+
     const prompt = `
 You are a professional poker coach.
 
 Analyze the hand and explain the best decision.
 
 === HERO ===
-Cards: ${scenario.heroCards?.join(", ") || "Unknown"}
-Position: ${scenario.heroPosition || "Unknown"}
-Stack: ${scenario.heroStack || 100} BB
+Cards: ${normalizedScenario.heroCards?.join(", ") || "Unknown"}
+Position: ${normalizedScenario.heroPosition || "Unknown"}
+Stack: ${normalizedScenario.heroStack || 100} BB
 
 === BOARD ===
-${scenario.board?.join(", ") || "No board"}
+${normalizedScenario.board?.join(", ") || "No board"}
 
 === OPPONENTS ===
-${(scenario.opponents || [])
+${(normalizedScenario.opponents || [])
   .map(o => `Seat ${o.seat}: ${o.style}, ${o.stack} BB`)
   .join("\n") || "Unknown"}
 
 === ACTION HISTORY ===
-${(scenario.actions || [])
-  .map(a => `${a.player}: ${a.action}`)
+${normalizedScenario.actions
+  .map(a => `${a.player}: ${a.type}${a.amount ? ` ${a.amount}` : ""}`)
   .join("\n") || "None"}
 
 === DECISION ===
@@ -50,6 +87,8 @@ Correct action: ${result.correctAction?.type || "Unknown"} ${
 
 Explain in 2–4 sentences like a poker coach.
 `;
+
+    console.log("AI Explain Prompt:", prompt);
 
     const response = await client.responses.create({
       model: "gpt-5-nano",

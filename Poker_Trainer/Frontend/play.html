@@ -531,7 +531,142 @@ body::after{
 .rp-street{color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1.5px;font-size:9px;min-width:55px;}
 .rp-decision{font-weight:600;}
 
-/* ═══════════════════ ACTION TRAY ═══════════════════ */
+/* ═══════════════ AI PANEL (RIGHT SIDE) ═══════════════ */
+#ai-panel{
+  position:fixed;
+  top:54px;
+  right:14px;
+  bottom:100px;
+  width:304px;
+  z-index:50;
+
+  display:flex;
+  flex-direction:column;
+
+  background:var(--glass);
+  border:1px solid rgba(201,168,76,0.16);
+  border-radius:4px;
+
+  backdrop-filter:blur(22px);
+  box-shadow:0 24px 60px rgba(0,0,0,0.92);
+
+  overflow:hidden;
+}
+
+#ai-header{
+  padding:12px 14px;
+  font-family:'Cinzel',serif;
+  font-size:12px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+
+  color:var(--gold2);
+  background:rgba(201,168,76,0.06);
+
+  border-bottom:1px solid rgba(201,168,76,0.12);
+}
+
+#ai-content{
+  flex:1;
+  padding:14px;
+  overflow-y:auto;
+
+  font-size:12px;
+  line-height:1.7;
+  color:rgba(255,255,255,0.75);
+  font-style:italic;
+}
+
+/* nice scrollbar */
+#ai-content::-webkit-scrollbar{
+  width:6px;
+}
+#ai-content::-webkit-scrollbar-thumb{
+  background:rgba(201,168,76,0.3);
+  border-radius:4px;
+}
+
+/* ══════════════════ AI CHAT INPUT ═════════════════ 
+#ai-chat-input {
+  border-top: 1px solid rgba(201,168,76,0.14);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0,0,0,0.18);
+}
+#ai-chat-textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 4px;
+  color: rgba(255,255,255,0.8);
+  font-size: 11px;
+  font-family: inherit;
+  line-height: 1.5;
+  padding: 7px 9px;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+  OLD: rows: 2;
+}
+#ai-chat-textarea:focus { border-color: rgba(201,168,76,0.55); }
+#ai-chat-textarea:disabled { opacity: 0.45; }
+#ai-chat-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#ai-chat-charcount {
+  font-size: 9px;
+  color: rgba(255,255,255,0.28);
+  letter-spacing: 0.5px;
+}
+#ai-chat-limit {
+  font-size: 9px;
+  color: rgba(255,100,100,0.7);
+  letter-spacing: 0.5px;
+}
+#ai-chat-send {
+  font-size: 9px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  height: 22px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 2px;
+  color: #c9a84c;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+#ai-chat-send:hover { background: rgba(201,168,76,0.22); }
+#ai-chat-send:disabled { opacity: 0.35; cursor: default; }
+
+/* ─── Conversation messages ───────
+.ai-msg-ai {
+  font-size: 12px;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.75);
+  font-style: italic;
+  margin-bottom: 10px;
+}
+.ai-msg-user {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--gold2);
+  font-style: normal;
+  background: rgba(201,168,76,0.07);
+  border-left: 2px solid rgba(201,168,76,0.4);
+  padding: 5px 8px;
+  border-radius: 2px;
+  margin-bottom: 6px;
+}*/
+
+
+/* ═══════════════════ ACTION BAR ═══════════════════ */
 #action-bar{
   position:fixed;bottom:10px;left:50%;transform:translateX(-50%);
   z-index:60;width:min(1120px,96vw);
@@ -751,6 +886,128 @@ body::after{
 .snd-btn:hover{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.35);color:#c9a84c;}
 .snd-btn.muted{opacity:0.28;text-decoration:line-through;}
 
+
+/* REMOVED: Experience selection button:
+#experience-btn {
+  margin-left: 10px;
+  font-size: 0.78rem;
+  background: rgba(201,168,76,0.1);
+  color: #c9a84c;
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 1px;
+  transition: background 0.2s;
+}
+#experience-btn:hover { background: rgba(201,168,76,0.2); }
+
+/* Full-screen dimmed overlay
+#exp-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Popup menu card
+#exp-menu {
+  background: #0f0f1a;
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 8px;
+  padding: 20px;
+  width: 320px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.9);
+}
+
+.exp-title {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c9a84c;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+/* Each level row
+.exp-option {
+  padding: 10px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  border: 1px solid transparent;
+  color: rgba(255,255,255,0.45);
+  transition: background 0.15s, color 0.15s;
+}
+.exp-option:hover { background: rgba(201,168,76,0.08); }
+
+/* Selected state
+.exp-option.exp-selected {
+  color: #c9a84c;
+  border-color: rgba(201,168,76,0.35);
+  background: rgba(201,168,76,0.1);
+}
+
+.exp-option-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+/* Spade hidden by default, shown only on selected
+.exp-spade {
+  font-size: 14px;
+  visibility: hidden;
+}
+.exp-selected .exp-spade { visibility: visible; }
+
+.exp-desc {
+  font-size: 11px;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+/* Action buttons
+#exp-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+#exp-cancel {
+  background: #5c1a1a;
+  color: #ff8080;
+  border: 1px solid rgba(255,80,80,0.4);
+  border-radius: 5px;
+  padding: 7px 18px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+#exp-cancel:hover { background: #7a2020; }
+
+#exp-confirm {
+  background: #1a3d1a;
+  color: #6fcf6f;
+  border: 1px solid rgba(80,200,80,0.4);
+  border-radius: 5px;
+  padding: 7px 18px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+#exp-confirm:hover { background: #245724; }*/
 </style>
 </head>
 <body>
@@ -795,6 +1052,39 @@ body::after{
     <div class="rp-total-score" id="rp-total">— / 10</div>
   </div>
 </div>
+
+<!--═══════════════ AI PANEL ═══════════════-->
+<div id="ai-panel">
+  <div id="ai-header">AI Coach</div>
+  <div id="ai-content">Make a move to get feedback...</div>
+</div>
+
+<!--REMOVED: HTML popup for experienceLevel:
+<div id="exp-overlay" style="display:none;">
+  <div id="exp-menu">
+    <div class="exp-title">Select Experience Level</div>
+    <div class="exp-option" data-level="newbie">
+      <div class="exp-option-header"><span class="exp-spade">♠</span><span class="exp-name">Newbie</span></div>
+      <div class="exp-desc">I have never played poker before. The AI coach will use almost no poker jargon and will explain unfamiliar terms.</div>
+    </div>
+    <div class="exp-option" data-level="beginner">
+      <div class="exp-option-header"><span class="exp-spade">♠</span><span class="exp-name">Beginner</span></div>
+      <div class="exp-desc">I have played poker before, but I'm not good at it. The AI coach will use some poker terms and assume you aren't familiar with winning strategies.</div>
+    </div>
+    <div class="exp-option" data-level="intermediate">
+      <div class="exp-option-header"><span class="exp-spade">♠</span><span class="exp-name">Intermediate</span></div>
+      <div class="exp-desc">I can play poker semi-comeptitively at casual getherings or online. The AI coach will use more poker terms and assume you are in it to win.</div>
+    </div>
+    <div class="exp-option" data-level="advanced">
+      <div class="exp-option-header"><span class="exp-spade">♠</span><span class="exp-name">Advanced</span></div>
+      <div class="exp-desc">I am a very experienced player who has played poker at a high level. The AI coach will use terms that experienced poker players know (GTO, EV, equity, ranges, etc.)</div>
+    </div>
+    <div id="exp-actions">
+      <button id="exp-cancel">Cancel</button>
+      <button id="exp-confirm">Confirm</button>
+    </div>
+  </div>
+</div>-->
 
 <!-- ═══════════════ MAIN SCENE ═══════════════ -->
 <div id="scene">
@@ -1200,8 +1490,85 @@ function sndToggleMusic() {
 }
 document.addEventListener('DOMContentLoaded', () => {
   if(window.SoundEngine){ SoundEngine.startMusic(); _sndSync(); }
-});
 
+
+
+  /* OLD: Code for dropdown menu idea for experience level:
+  const sel = document.getElementById("experience-level");
+  sel.value = localStorage.getItem("experienceLevel") || "beginner";
+  sel.addEventListener("change", () => localStorage.setItem("experienceLevel", sel.value));
+
+  // NEW: Popup menu idea: 
+    (function() {
+    let currentLevel = localStorage.getItem("experienceLevel") || "beginner";
+    let tempLevel = currentLevel;
+
+    const btn = document.getElementById("experience-btn");
+    const label = document.getElementById("experience-label");
+    const overlay = document.getElementById("exp-overlay");
+    const options = document.querySelectorAll(".exp-option");
+
+    function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+    function refreshOptions() {
+      options.forEach(opt => {
+        opt.classList.toggle("exp-selected", opt.dataset.level === tempLevel);
+      });
+    }
+
+    function applyLevel(level) {
+      currentLevel = level;
+      localStorage.setItem("experienceLevel", level);
+      label.textContent = capitalize(level);
+    }
+
+    // Open popup
+    btn.addEventListener("click", () => {
+      tempLevel = currentLevel;
+      refreshOptions();
+      overlay.style.display = "flex";
+    });
+
+    // Click a level option
+    options.forEach(opt => {
+      opt.addEventListener("click", () => {
+        tempLevel = opt.dataset.level;
+        refreshOptions();
+      });
+    });
+
+    // Cancel (close without saving)
+    document.getElementById("exp-cancel").addEventListener("click", () => {
+      overlay.style.display = "none";
+    });
+
+    // Confirm (save and close)
+    document.getElementById("exp-confirm").addEventListener("click", () => {
+      applyLevel(tempLevel);
+      overlay.style.display = "none";
+    });
+
+    // Click background to cancel
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) overlay.style.display = "none";
+    });
+
+    // Initialize label
+    label.textContent = capitalize(currentLevel);
+  })();
+
+  // NEW: Event listeners for chatbot interaction:
+  document.getElementById("ai-chat-textarea").addEventListener("input", function() {
+    document.getElementById("ai-chat-charcount").textContent = `${this.value.length} / 300`;
+    });
+    document.getElementById("ai-chat-textarea").addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendChatMessage();
+      }
+    });
+    document.getElementById("ai-chat-send").addEventListener("click", sendChatMessage);*/
+});
 </script>
 
 
@@ -1214,6 +1581,12 @@ document.addEventListener('DOMContentLoaded', () => {
 let _phase        = "idle";
 let _heroActionCb = null;
 // currentScenario and sessionId from app.js
+
+// State variables for chat history:
+let chatHistory = [];
+let chatQuestionCount = 0;
+let lastUserAction = null;
+const CHAT_MAX_QUESTIONS = 3;
 
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function waitForHeroAction(){ return new Promise(r=>{ _heroActionCb=r; }); }
@@ -1256,7 +1629,30 @@ async function startGame(){
   const rp = document.getElementById("result-panel");
   if(rp) rp.style.display = "none";
 
+  // Sets the AI panel to reset
+  const aiPanel = document.getElementById("ai-panel");
+  if (aiPanel) aiPanel.style.bottom = "";
+  const chatInput = document.getElementById("ai-chat-input");
+  if (chatInput) chatInput.style.display = "none";
+  chatHistory = [];
+  chatQuestionCount = 0;
+  lastUserAction = null;
+  const aiEl = document.getElementById("ai-content");
+
+  if (aiEl) {
+    aiEl.innerHTML = "";
+    const placeholder = document.createElement("em");
+    placeholder.textContent = "Make a move to get feedback...";
+    aiEl.appendChild(placeholder);
+}
+
+  /*
+  QOL fix: This is needed to set loader text to "Loading..."
+  in addition to the real QOL fix at line 1472.
+  */
+  document.getElementById("loader").textContent = "Loading…";
   document.getElementById("loader").style.display = "block";
+
   const res = await fetch(`${API_BASE}/game/start`, {
     method: "POST",
     headers: authHeaders(),
@@ -1301,6 +1697,7 @@ async function submitDecision(userAction, opts){
   const heroStack = (typeof window.getStacks === "function" && window.getStacks()[0]) ?? 100;
   document.getElementById("loader").style.display = "block";
   try {
+    lastUserAction = userAction; // NEW: for DOM manipulation
     const res = await fetch(`${API_BASE}/game/${sid}/decision`, {
       method: "POST",
       headers: authHeaders(),
@@ -1313,9 +1710,67 @@ async function submitDecision(userAction, opts){
       })
     });
     const data = await res.json();
+
+    if (!res.ok) {
+      showError(data.error || "Failed to submit decision");
+      return;
+    }
+
+    /*
+    Changes loader text to more accurately explain
+    what is happening after the completion of a hand.
+    AI shows it is analyzing the user's decision.
+    */
+    document.getElementById("loader").textContent = "Hand Completed. Generating a response…";
+    const aiEl = document.getElementById("ai-content");
+    if (aiEl) {
+      aiEl.innerHTML = "";
+      const em = document.createElement("em");
+      em.textContent = "Analyzing your decision...";
+      aiEl.appendChild(em);
+    }
+    
+    // Send prompt to OpenAI for feedback
+    const aiRes = await fetch(`${API_BASE}/ai/explain`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({
+        scenario: currentScenario,
+        userAction,
+        result: data,
+      })
+    });
+
+    const aiData = await aiRes.json();
+
     document.getElementById("loader").style.display = "none";
-    if(!res.ok){ showError(data.error || "Error"); return; }
     showResultModal(data);
+
+    if (aiData?.explanation) {
+      const el = document.getElementById("ai-content");
+      if (el) el.textContent = aiData.explanation;
+    }
+
+    /* NEW: AI data explanation for chat history:
+    if (aiData?.explanation) {
+      const el = document.getElementById("ai-content");
+      if (el) {
+        el.innerHTML = "";
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "ai-msg-ai";
+        msgDiv.textContent = aiData.explanation;
+        el.appendChild(msgDiv);
+      }
+      chatHistory = [{ role: "assistant", content: aiData.explanation }];
+      chatQuestionCount = 0;
+      const sendBtn = document.getElementById("ai-chat-send");
+      const textarea = document.getElementById("ai-chat-textarea");
+      const limitEl = document.getElementById("ai-chat-limit");
+      if (sendBtn) sendBtn.disabled = false;
+      if (textarea) { textarea.disabled = false; textarea.value = ""; textarea.placeholder = "Ask a follow-up question... (Shift+Enter for newline)"; }
+      if (limitEl) limitEl.textContent = "";
+    }*/
+  
     await completeGame();
   } catch(err){
     document.getElementById("loader").style.display = "none";
@@ -1345,8 +1800,82 @@ function showResultModal(data){
       tag.className = "rp-tag " + (data.isCorrect ? "tag-great" : "tag-bad");
     }
   }
+
   panel.style.display = "flex";
+
+  /* REMOVED: AI chatbox
+  // Shrink AI panel bottom to clear the result panel, then show chat input
+  const aiPanel = document.getElementById("ai-panel");
+  const chatInput = document.getElementById("ai-chat-input");
+  if (aiPanel) aiPanel.style.bottom = (106 + panel.offsetHeight + 10) + "px";
+  if (chatInput) chatInput.style.display = "flex";*/
 }
+
+
+/* Removed AI chatbot
+async function sendChatMessage() {
+  const textarea = document.getElementById("ai-chat-textarea");
+  const sendBtn = document.getElementById("ai-chat-send");
+  const limitEl = document.getElementById("ai-chat-limit");
+  const aiContent = document.getElementById("ai-content");
+  const msg = textarea.value.trim();
+  if (!msg || chatQuestionCount >= CHAT_MAX_QUESTIONS) return;
+
+  textarea.disabled = true;
+  sendBtn.disabled = true;
+
+  const userDiv = document.createElement("div");
+  userDiv.className = "ai-msg-user";
+  userDiv.textContent = msg;
+  aiContent.appendChild(userDiv);
+
+  const loadingDiv = document.createElement("div");
+  loadingDiv.className = "ai-msg-ai";
+  loadingDiv.textContent = "Thinking...";
+  aiContent.appendChild(loadingDiv);
+  aiContent.scrollTop = aiContent.scrollHeight;
+
+  chatHistory.push({ role: "user", content: msg });
+  textarea.value = "";
+  document.getElementById("ai-chat-charcount").textContent = "0 / 300";
+
+  try {
+    const res = await fetch(`${API_BASE}/ai/chat`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({
+        scenario: currentScenario,
+        userAction: lastUserAction,
+        experienceLevel: localStorage.getItem("experienceLevel") || "beginner",
+        history: chatHistory
+      })
+    });
+    const data = await res.json();
+    loadingDiv.remove();
+    if (data?.reply) {
+      const replyDiv = document.createElement("div");
+      replyDiv.className = "ai-msg-ai";
+      replyDiv.textContent = data.reply;
+      aiContent.appendChild(replyDiv);
+      chatHistory.push({ role: "assistant", content: data.reply });
+    }
+  } catch {
+    loadingDiv.textContent = "Failed to get response.";
+  }
+
+  chatQuestionCount++;
+  aiContent.scrollTop = aiContent.scrollHeight;
+
+  if (chatQuestionCount >= CHAT_MAX_QUESTIONS) {
+    textarea.disabled = true;
+    sendBtn.disabled = true;
+    textarea.placeholder = "Question limit reached for this hand.";
+    if (limitEl) limitEl.textContent = `${CHAT_MAX_QUESTIONS}/${CHAT_MAX_QUESTIONS} questions used`;
+  } else {
+    textarea.disabled = false;
+    sendBtn.disabled = false;
+  }
+}*/
 
 /* ─── POSTFLOP ACTION ───────────────────────────────────── */
 function playerAction(type){

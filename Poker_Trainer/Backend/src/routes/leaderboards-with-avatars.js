@@ -14,7 +14,7 @@ router.get("/", async (_req, res) => {
   try {
     const { data: users, error } = await supabaseAdmin
       .from("users")
-      .select("user_id, username, xp, rank, avatar_url")
+      .select("user_id, username, xp, rank, avatar_url, scenarios_played, scenarios_won")
       .order("xp", { ascending: false })
       .limit(50);
 
@@ -31,6 +31,8 @@ router.get("/", async (_req, res) => {
       position:  index + 1,
       username:  player.username,
       rank:      player.rank ? (rankMap[player.rank] || "Copper") : "Copper",
+      handsPlayed: player.scenarios_played ?? 0,
+      handsWon: player.scenarios_won ?? 0,
       xp:        player.xp ?? 0,
       avatarUrl: player.avatar_url || buildAvatarUrl(player.username),
     }));

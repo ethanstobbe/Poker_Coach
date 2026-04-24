@@ -413,8 +413,8 @@ router.post("/:sessionId/complete", async (req, res) => {
     const { data: scenario } = await supabaseAdmin
       .from("hand_scenarios").select("pot").eq("hand_scenario_id", session.hand_scenario_id).single();
 
-    const isCorrect    = session.score === 10; /* full credit only; score 5 = partial (no XP/earnings) */
-    const xpGain       = isCorrect ? xpReward(session.difficulty) : 0;
+    const isCorrect    = session.score === 10; /* full credit only; score 5 = partial for decision quality */
+    const xpGain       = Math.max(0, Number(session.score) || 0); /* 5/10 score => 5 XP, 10/10 => 10 XP */
     const earningsGain = earningsReward(isCorrect, scenario?.pot);
 
     await supabaseAdmin.from("sessions")

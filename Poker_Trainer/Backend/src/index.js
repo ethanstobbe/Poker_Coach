@@ -12,6 +12,7 @@ const passResetRoutes = require("./routes/pass-reset");
 const signupRoutes = require("./routes/signup");
 const newPassRoutes = require("./routes/new-pass");
 const profileRoutes = require("./routes/profile-update");
+const aiRoutes = require("./routes/ai");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -37,6 +38,7 @@ app.use("/api/pass-reset", passResetRoutes);
 app.use("/api/signup", signupRoutes);
 app.use("/api/new-pass", newPassRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.get("/api/health", (_req, res) => {
   res.json({

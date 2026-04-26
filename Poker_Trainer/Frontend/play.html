@@ -1587,9 +1587,31 @@ let chatHistory = [];
 let chatQuestionCount = 0;
 let lastUserAction = null;
 const CHAT_MAX_QUESTIONS = 3;
+let preGeneratedScenarioId = null;
+let generationPromise = null;
 
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function waitForHeroAction(){ return new Promise(r=>{ _heroActionCb=r; }); }
+
+async function queueNextScenarioGeneration() {
+  if (generationPromise) return generationPromise;
+  generationPromise = (async () => {
+    const res = await fetch(`${API_BASE}/game/generate-next-scenario`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to generate scenario");
+    preGeneratedScenarioId = data.handScenarioId;
+    return preGeneratedScenarioId;
+  })();
+  try {
+    return await generationPromise;
+  } finally {
+    generationPromise = null;
+  }
+}
 
 /* ─── SET PHASE ─────────────────────────────────────────── */
 function setPhase(phase){
@@ -1650,13 +1672,25 @@ async function startGame(){
   QOL fix: This is needed to set loader text to "Loading..."
   in addition to the real QOL fix at line 1472.
   */
+  if (!preGeneratedScenarioId) {
+    document.getElementById("loader").textContent = "Generating New Scenario…";
+    document.getElementById("loader").style.display = "block";
+    try {
+      await queueNextScenarioGeneration();
+    } catch (err) {
+      document.getElementById("loader").style.display = "none";
+      showError(err.message);
+      return;
+    }
+  }
+
   document.getElementById("loader").textContent = "Loading…";
   document.getElementById("loader").style.display = "block";
 
   const res = await fetch(`${API_BASE}/game/start`, {
     method: "POST",
     headers: authHeaders(),
-    body: JSON.stringify({})
+    body: JSON.stringify({ handScenarioId: preGeneratedScenarioId })
   });
   const data = await res.json();
   document.getElementById("loader").style.display = "none";
@@ -1665,6 +1699,7 @@ async function startGame(){
 
   sessionId = data.sessionId;
   currentScenario = data.scenario;
+  preGeneratedScenarioId = null;
   localStorage.setItem("sessionId", sessionId);
 
   if(window.SoundEngine){ SoundEngine.play("shuffle"); SoundEngine.startMusic(); }
@@ -1715,6 +1750,11 @@ async function submitDecision(userAction, opts){
       showError(data.error || "Failed to submit decision");
       return;
     }
+
+    // Start generating the next hand while the user reads AI feedback.
+    queueNextScenarioGeneration().catch(err => {
+      console.error("Background scenario generation failed:", err);
+    });
 
     /*
     Changes loader text to more accurately explain
@@ -1918,6 +1958,7 @@ async function completeGame(){
 }
 
 document.addEventListener("DOMContentLoaded", () => { setPhase("idle"); });
+document.addEventListener("DOMContentLoaded", () => { startGame(); });
 
 /* ─── STYLES PANEL TOGGLE ─────────────────────────── */
 function toggleStylesPanel(){

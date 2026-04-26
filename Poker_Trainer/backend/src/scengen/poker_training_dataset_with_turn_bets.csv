@@ -1,0 +1,12 @@
+HandID,P1,P2,P3,P4,P5,P6,P7,P8,Style_P1,Style_P2,Style_P3,Style_P4,Style_P5,Style_P6,Style_P7,Style_P8,Flop,Turn,River,Flop_Strength_P1,Flop_Strength_P2,Flop_Strength_P3,Flop_Strength_P4,Flop_Strength_P5,Flop_Strength_P6,Flop_Strength_P7,Flop_Strength_P8,Flop_Action,Turn_Strength_P1,Turn_Strength_P2,Turn_Strength_P3,Turn_Strength_P4,Turn_Strength_P5,Turn_Strength_P6,Turn_Strength_P7,Turn_Strength_P8,Turn_Action
+3,2d 3d,F,F,3h 3c,Kh Ad,F,8c 5h,F,PASSIVE,NIT,LAG,LAG,LAG,PASSIVE,LAG,TAG,Qd 4c 8d,9s,Jh,2,-1,-1,1,1,-1,1,-1,"F|P4:X,P5:X,P7:X,P1:X",2,-1,-1,1,1,-1,1,-1,"T|P4:X,P5:X,P7:X,P1:X"
+5,9s As,Kh 7h,F,3s Ts,F,4d Jd,F,F,TAG,PASSIVE,NIT,PASSIVE,PASSIVE,LAG,NIT,LAG,8c 6h Td,3c,2h,2,2,-1,3,-1,1,-1,-1,"F|P2:X,P4:X,P6:X,P1:X",2,2,-1,4,-1,1,-1,-1,"T|P2:X,P4:B(33),P6:C,P1:C,P2:F"
+6,F,Js 5d,F,F,F,4d 8d,F,F,TAG,LAG,TAG,NIT,LAG,LAG,LAG,PASSIVE,9d Ad Ts,Qc,9c,-1,0,-1,-1,-1,2,-1,-1,"F|P2:X,P6:X",-1,2,-1,-1,-1,3,-1,-1,"T|P2:B(33),P6:R(33),P2:F"
+7,F,Ad Kd,F,F,Ks Ah,F,F,F,NIT,PASSIVE,NIT,LAG,LAG,TAG,NIT,NIT,Qs Kh Qc,5s,6s,-1,4,-1,-1,4,-1,-1,-1,"F|P2:B(50),P5:R(100),P2:C",-1,4,-1,-1,4,-1,-1,-1,"T|P2:B(50),P5:R(75),P2:C"
+8,Ts As,F,Ad 7c,F,3d Jd,F,F,Kh 6h,PASSIVE,NIT,PASSIVE,TAG,LAG,NIT,LAG,PASSIVE,7d 8c Ah,5d,Qh,3,-1,4,-1,0,-1,-1,0,"F|P3:B(50),P5:F,P8:F,P1:C",3,-1,4,-1,-1,-1,-1,-1,"T|P3:B(33),P1:C"
+9,F,F,Kd 7d,F,9h 4h,Jd Ah,F,F,PASSIVE,LAG,LAG,LAG,PASSIVE,PASSIVE,TAG,TAG,Td 7s Qs,9c,Ac,-1,-1,1,-1,0,2,-1,-1,"F|P3:X,P5:X,P6:X",-1,-1,2,-1,1,2,-1,-1,"T|P3:X,P5:X,P6:X"
+10,F,6c 6h,Kc Ac,6s Ts,F,8c Jc,F,2c Qd,LAG,TAG,LAG,PASSIVE,PASSIVE,LAG,LAG,PASSIVE,2h 5s Th,3h,Td,-1,1,1,3,-1,1,-1,1,"F|P2:X,P3:X,P4:B(33),P6:F,P8:F,P2:F,P3:F",-1,-1,-1,-1,-1,-1,-1,-1,T|HAND_OVER
+14,F,F,3s 3d,F,Kc Kd,F,F,F,TAG,TAG,NIT,NIT,TAG,NIT,LAG,TAG,Th 8c 4s,5s,Ah,-1,-1,1,-1,3,-1,-1,-1,"F|P3:X,P5:B(33),P3:F",-1,-1,-1,-1,-1,-1,-1,-1,T|HAND_OVER
+15,F,F,F,F,F,F,8d 8c,Tc Th,NIT,NIT,TAG,TAG,LAG,LAG,LAG,TAG,7c 7s 4h,Jh,9d,-1,-1,-1,-1,-1,-1,4,4,"F|P7:B(75),P8:R(75),P7:R(100),P8:C",-1,-1,-1,-1,-1,-1,4,4,"T|P7:B(100),P8:R(75),P7:R(75),P8:C"
+16,Ad 9d,3s Js,F,Qh Qd,F,2c 2d,F,F,PASSIVE,PASSIVE,PASSIVE,NIT,TAG,LAG,NIT,LAG,Jd 7d Kd,9h,4h,4,1,-1,2,-1,2,-1,-1,"F|P2:X,P4:X,P6:X,P1:B(33),P2:F,P4:F,P6:F",-1,-1,-1,-1,-1,-1,-1,-1,T|HAND_OVER
+20,5c 8d,F,7d Qd,F,F,As 3s,F,F,LAG,TAG,PASSIVE,LAG,NIT,LAG,TAG,LAG,3h Jc 4h,5h,Qs,0,-1,1,-1,-1,1,-1,-1,"F|P3:X,P6:X,P1:X",1,-1,2,-1,-1,2,-1,-1,"T|P3:X,P6:B(33),P1:C,P3:F"

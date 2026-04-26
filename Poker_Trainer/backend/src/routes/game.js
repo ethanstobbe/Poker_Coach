@@ -1,5 +1,8 @@
 const express = require("express");
 const crypto  = require("crypto");
+const fs = require("fs/promises");
+const path = require("path");
+const { spawn } = require("child_process");
 
 const supabaseClient = require("../config/supabaseClient");
 const supabaseAdmin  = require("../config/supabaseAdmin");
@@ -186,6 +189,121 @@ async function getRandomScenario() {
   return data;
 }
 
+async function getScenarioById(handScenarioId) {
+  const { data, error } = await supabaseAdmin
+    .from("hand_scenarios")
+    .select("*")
+    .eq("hand_scenario_id", handScenarioId)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+function parseCsvLine(line) {
+  const out = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        cur += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+    if (ch === "," && !inQuotes) {
+      out.push(cur);
+      cur = "";
+      continue;
+    }
+    cur += ch;
+  }
+  out.push(cur);
+  return out;
+}
+
+function csvRowToObject(headers, values) {
+  const obj = {};
+  headers.forEach((h, idx) => {
+    obj[h] = values[idx] ?? "";
+  });
+  return obj;
+}
+
+async function runPythonScript(scriptName, workingDir) {
+  await new Promise((resolve, reject) => {
+    const child = spawn("python", [scriptName], { cwd: workingDir, shell: false });
+    let stderr = "";
+    child.stderr.on("data", (d) => { stderr += d.toString(); });
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (code === 0) return resolve();
+      reject(new Error(`Script failed: ${scriptName} (exit ${code}) ${stderr}`));
+    });
+  });
+}
+
+async function buildAndInsertGeneratedScenario() {
+  const scengenDir = path.join(__dirname, "..", "scengen");
+  const scripts = [
+    "Pre_flop_Card_Gen_file.py",
+    "prefold_scenarios.py",
+    "flop_strength_eval.py",
+    "generate_bets.py",
+    "turn_strength_eval.py",
+    "turn_betting.py",
+    "fix_missing_rivers.py",
+    "river_strength_eval.py",
+    "river_betting.py",
+    "fix_for_supabase.py",
+  ];
+
+  for (const script of scripts) {
+    const fullPath = path.join(scengenDir, script);
+    try {
+      await fs.access(fullPath);
+    } catch {
+      if (script === "fix_missing_rivers.py") continue;
+      throw new Error(`Missing scenario generator script: ${script}`);
+    }
+    await runPythonScript(script, scengenDir);
+  }
+
+  const finalCsvPath = path.join(scengenDir, "hand_scenarios_supabase_ready.csv");
+  const csvRaw = await fs.readFile(finalCsvPath, "utf8");
+  const lines = csvRaw.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (lines.length < 2) throw new Error("Generated CSV has no scenario rows");
+
+  const headers = parseCsvLine(lines[0]).map(h => h.trim());
+  const dataLines = lines.slice(1);
+  const randomLine = dataLines[Math.floor(Math.random() * dataLines.length)];
+  const generatedRow = csvRowToObject(headers, parseCsvLine(randomLine));
+
+  const { data: maxRow, error: maxErr } = await supabaseAdmin
+    .from("hand_scenarios")
+    .select("hand_scenario_id")
+    .order("hand_scenario_id", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (maxErr) throw maxErr;
+  const nextId = (Number(maxRow?.hand_scenario_id) || 0) + 1;
+
+  const rowToInsert = {
+    ...generatedRow,
+    hand_scenario_id: nextId,
+  };
+
+  const { error: insertErr } = await supabaseAdmin
+    .from("hand_scenarios")
+    .insert(rowToInsert);
+  if (insertErr) throw insertErr;
+
+  return rowToInsert;
+}
+
 /* ══════════════════════════════════════
    CARD PARSER
 ══════════════════════════════════════ */
@@ -205,7 +323,10 @@ function parseCards(str) {
 router.post("/start", async (req, res) => {
   try {
     const userId = await getUserIdFromToken(req);
-    const scenario = await getRandomScenario();
+    const requestedScenarioId = Number(req.body?.handScenarioId);
+    const scenario = Number.isFinite(requestedScenarioId)
+      ? await getScenarioById(requestedScenarioId)
+      : await getRandomScenario();
     const sessionId = crypto.randomUUID();
 
     const flopRaw = scenario.flop_action;
@@ -298,6 +419,17 @@ router.post("/start", async (req, res) => {
     res.json({ sessionId, scenario: scenarioForUI });
   } catch (err) {
     console.error("GAME START ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/generate-next-scenario", async (req, res) => {
+  try {
+    await getUserIdFromToken(req);
+    const scenario = await buildAndInsertGeneratedScenario();
+    res.json({ handScenarioId: scenario.hand_scenario_id });
+  } catch (err) {
+    console.error("GENERATE SCENARIO ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 });

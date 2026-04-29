@@ -1,2 +1,2 @@
 hand_scenario_id,hero_hand,p2,p3,p4,p5,p6,p7,p8,style_p1,style_p2,style_p3,style_p4,style_p5,style_p6,style_p7,style_p8,flop,turn,river,flop_action,turn_action,river_action
-9,F,F,Kd 7d,F,9h 4h,Jd Ah,F,F,PASSIVE,LAG,LAG,LAG,PASSIVE,PASSIVE,TAG,TAG,Td 7s Qs,9c,Ac,"F|P3:X,P5:X,P6:X","T|P3:X,P5:X,P6:X","R|P3:X,P5:X,P6:X"
+20,3s 9s,F,F,Qh 5h,F,As 3d,F,9d 4d,LAG,TAG,PASSIVE,LAG,NIT,LAG,TAG,LAG,Jd 7h 4s,5s,8s,"F|P4:X,P6:X,P8:X,P1:X","T|P4:X,P6:B(50),P8:F,P1:R(33),P4:F,P6:C","R|P6:B(50),P1:C"

@@ -47,6 +47,49 @@ npm run dev
 
 ```
 
+## Troubleshooting
+If you receive an error that says "...running scripts is disabled on this system." then run this command before trying the above instructions again:
+
+```bash
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+```
+
+This will bypass the execution policy on your system for your current session in PowerShell and cmd. 
+If you exit out of your current session, you will need to run this again. 
+You can replace "Process" with "CurrentUser"
+This will make it so you don't have to run the above command everytime,
+but will make a permanent change to your execution policy to allow all scripts.
+To undo this, Replace "RemoteSigned" with "Restricted" to restore script
+settings to the Windows default.
+
+Allow all scripts:
+```bash
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser  // huh
+```
+
+Disable all scripts (Windows default):
+```bash
+Set-ExecutionPolicy -ExecutionPolicy Restricted -Scope CurrentUser
+```
+
+If you get the error
+
+`pip : The term 'pip' is not recognized as the name of a cmdlet, function, script file, or operable program.` OR `'pip' is not recognized as an internal or external command,
+operable program or batch file.`
+
+Ensure that Python is [installed](https://www.python.org/downloads/) on your system.
+
+If you have determined that Python is already installed on your system,
+it may not be configured on your PATH in your system's environment variables.
+To fix this:
+
+1. Press Win + S and search "Edit the system environment variables" and click it.
+2. Click "Environment Variables..."
+3. Under "User variables" or "System variables", find and select Path, then click Edit
+4. Click New and paste the location of your scripts folder(`\Python312\Scripts`).
+5. Click OK on all dialogs
+6. Try the pip commands again.
+
 The API and static frontend are served together (see `backend/src/index.js`). By default:
 
 - App: **http://localhost:3000**

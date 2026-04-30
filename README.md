@@ -64,7 +64,7 @@ settings to the Windows default.
 
 Allow all scripts:
 ```bash
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser  // huh
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 Disable all scripts (Windows default):
@@ -89,6 +89,7 @@ To fix this:
 4. Click New and paste the location of your scripts folder(`\Python312\Scripts`).
 5. Click OK on all dialogs
 6. Try the pip commands again.
+---
 
 The API and static frontend are served together (see `backend/src/index.js`). By default:
 
@@ -99,7 +100,8 @@ The API and static frontend are served together (see `backend/src/index.js`). By
 
 ## Backend environment variables
 
-Copy or create `Poker_Trainer/backend/.env` with values your project expects (Supabase URL/keys, `FRONTEND_ORIGIN`, OpenAI keys for AI routes, etc.). Without valid Supabase settings, login and DB-backed features won’t work.
+Please contact the group coordinator for the .env file. This program is currently undergoing testing and grading.
+Without the .env file, this program will not function.
 
 ---
 
